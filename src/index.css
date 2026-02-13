@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: "Inter", sans-serif;
+  }
+}
+
+/* Custom checkbox style handling via CSS variables for the SVG */
+.custom-checkbox:checked {
+  background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCRxaWi3iQqmMVnKT1d30JfkHSebTS5iosnegt00ApEzUWYaktzscXJobMEBKX8MwCUWodpZsexbYxUrUqUSPhMVlo4TC_74JHVX3pru-6SGLn_bqra-9p87HiZ9i--00Yb1EEOs0uBxQ5ARE1SrqAD80F0e93sBmtUFc2Ssq1tJxlylFhL8ScwJjM_hDOR25c8-MpNFmI9re_EoKDbATDs_XIVvWFnk-9T8TMehosG3f436NMneQZu4h-tMe2HdSP8IBorfWo_EE8);
+}

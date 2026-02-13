@@ -1,0 +1,334 @@
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import Category from './models/Category.js';
+import Service from './models/Service.js';
+import Lead from './models/Lead.js';
+import Project from './models/Project.js';
+import Setting from './models/Setting.js';
+import Stat from './models/Stat.js';
+import About from './models/About.js';
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+// Use webrentaldb as confirmed by user/migration success
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/webrentaldb';
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Database Connection
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
+
+// Multer storage configuration
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// File Upload Route
+app.post('/upload', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const relativePath = `/uploads/${req.file.filename}`;
+    res.json({ url: relativePath });
+});
+
+// Helper for sorting
+const getSortOption = (req) => {
+    const { _sort, _order } = req.query;
+    if (_sort) {
+        return { [_sort]: _order === 'desc' ? -1 : 1 };
+    }
+    return {};
+};
+
+// API Routes
+
+// Categories
+app.get('/categories', async (req, res) => {
+    try {
+        const categories = await Category.find().sort(getSortOption(req));
+        res.json(categories);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/categories/:id', async (req, res) => {
+    try {
+        const category = await Category.findOne({ id: req.params.id });
+        if (!category) return res.status(404).json({ error: 'Category not found' });
+        res.json(category);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/categories', async (req, res) => {
+    try {
+        const category = new Category(req.body);
+        await category.save();
+        res.status(201).json(category);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.put('/categories/:id', async (req, res) => {
+    try {
+        const category = await Category.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
+        if (!category) return res.status(404).json({ error: 'Category not found' });
+        res.json(category);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.delete('/categories/:id', async (req, res) => {
+    try {
+        const category = await Category.findOneAndDelete({ id: req.params.id });
+        if (!category) return res.status(404).json({ error: 'Category not found' });
+        res.json({ message: 'Category deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Services
+app.get('/services', async (req, res) => {
+    try {
+        const query = {};
+        if (req.query.category) {
+            query.category = req.query.category; // Simple match
+            // If category is comma separated or array, need $in, but json-server usually requires specific format or exact match
+        }
+        // Handle json-server's `q` full text search if needed, but for now simple filter 
+        // If req.query contains other fields, we could add them to query.
+
+        const services = await Service.find(query).sort(getSortOption(req));
+        res.json(services);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/services/:id', async (req, res) => {
+    try {
+        const service = await Service.findOne({ id: req.params.id });
+        if (!service) return res.status(404).json({ error: 'Service not found' });
+        res.json(service);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/services', async (req, res) => {
+    try {
+        const service = new Service(req.body);
+        await service.save();
+        res.status(201).json(service);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.put('/services/:id', async (req, res) => {
+    try {
+        const service = await Service.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
+        if (!service) return res.status(404).json({ error: 'Service not found' });
+        res.json(service);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.delete('/services/:id', async (req, res) => {
+    try {
+        const service = await Service.findOneAndDelete({ id: req.params.id });
+        if (!service) return res.status(404).json({ error: 'Service not found' });
+        res.json({ message: 'Service deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// Leads
+// NOTE: Leads use standard Mongo _id but expose it as 'id' in JSON.
+// Frontend sends DELETE /leads/:id which is likely the Mongo ID string.
+app.get('/leads', async (req, res) => {
+    try {
+        const leads = await Lead.find().sort(getSortOption(req));
+        res.json(leads);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/leads', async (req, res) => {
+    try {
+        const lead = new Lead(req.body);
+        await lead.save();
+        res.status(201).json(lead);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.delete('/leads/:id', async (req, res) => {
+    try {
+        // Find by _id
+        const lead = await Lead.findByIdAndDelete(req.params.id);
+        if (!lead) return res.status(404).json({ error: 'Lead not found' });
+        res.json({ message: 'Lead deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Projects
+app.get('/projects', async (req, res) => {
+    try {
+        const projects = await Project.find().sort(getSortOption(req));
+        res.json(projects);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/projects/:id', async (req, res) => {
+    try {
+        // Try finding by internal ID string first
+        const project = await Project.findOne({ id: req.params.id });
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        res.json(project);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/projects', async (req, res) => {
+    try {
+        const project = new Project(req.body);
+        await project.save();
+        res.status(201).json(project);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.put('/projects/:id', async (req, res) => { // Full update
+    try {
+        const project = await Project.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        res.json(project);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.patch('/projects/:id', async (req, res) => { // Partial update (visibility toggle)
+    try {
+        const project = await Project.findOneAndUpdate({ id: req.params.id }, { $set: req.body }, { new: true });
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        res.json(project);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.delete('/projects/:id', async (req, res) => {
+    try {
+        const project = await Project.findOneAndDelete({ id: req.params.id });
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        res.json({ message: 'Project deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// Settings (Singleton)
+app.get('/settings', async (req, res) => {
+    try {
+        const settings = await Setting.findOne();
+        res.json(settings || {});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/settings', async (req, res) => {
+    try {
+        const settings = await Setting.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+        res.json(settings);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+// Stats (Singleton)
+app.get('/stats', async (req, res) => {
+    try {
+        const stats = await Stat.findOne();
+        res.json(stats || {});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// About (Singleton)
+app.get('/about', async (req, res) => {
+    try {
+        const about = await About.findOne();
+        res.json(about || {});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/about', async (req, res) => {
+    try {
+        const about = await About.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+        res.json(about);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`File uploads endpoint: POST http://localhost:${PORT}/upload`);
+});

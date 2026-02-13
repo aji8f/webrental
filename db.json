@@ -1,0 +1,353 @@
+{
+  "categories": [
+    {
+      "id": "CAT-001",
+      "name": "Layar LED / Videotron",
+      "slug": "led-videotron",
+      "description": "Layar LED Indoor dan Outdoor dengan berbagai pixel pitch untuk visual yang tajam.",
+      "count": 15,
+      "type": "service",
+      "icon": "screenshot_monitor",
+      "image": "/uploads/image-1770551916430-768136007.jpg",
+      "startingPrice": "Rp 550.000 / meter"
+    },
+    {
+      "id": "CAT-002",
+      "name": "Smart TV & Display",
+      "slug": "smart-tv",
+      "description": "Smart TV 4K UHD berbagai ukuran (43\" - 85\") dan floor standing display.",
+      "count": 42,
+      "type": "service",
+      "icon": "tv",
+      "image": "/uploads/image-1770551994087-762488600.jpg",
+      "startingPrice": "Rp 550.000 / hari"
+    },
+    {
+      "id": "CAT-003",
+      "name": "Proyektor & Screen",
+      "slug": "projector",
+      "description": "Proyektor laser intensitas tinggi dan layar berbagai ukuran untuk presentasi.",
+      "count": 18,
+      "type": "service",
+      "icon": "videocam",
+      "image": "/uploads/image-1770552090022-471282541.jpg",
+      "startingPrice": "Rp 550.000 / unit"
+    },
+    {
+      "id": "CAT-004",
+      "name": "Digital Signage",
+      "slug": "digital-signage",
+      "description": "Kiosk interaktif dan display signage digital untuk informasi acara.",
+      "count": 10,
+      "type": "service",
+      "icon": "touch_app",
+      "image": "/uploads/image-1770552139785-721113564.jpg",
+      "startingPrice": "Rp 550.000 / unit"
+    }
+  ],
+  "about": {
+    "homeSummary": {
+      "tagline": "YMedia",
+      "title": "Solusi Visual Terintegrasi untuk Event Anda",
+      "description1": "Kami adalah penyedia layanan penyewaan peralatan multimedia yang berfokus pada kualitas dan keandalan. Dengan pengalaman menangani ratusan event, kami mengerti betapa pentingnya aspek visual dalam kesuksesan sebuah acara.",
+      "description2": "Layanan kami mencakup instalasi profesional, dukungan teknis di lokasi, dan peralatan teknologi terkini. Mulai dari Videotron P2.9 yang tajam untuk backdrop panggung, hingga Kiosk Digital interaktif untuk registrasi tamu, kami siap mendukung kebutuhan Anda.",
+      "image": "/uploads/image-1770590603880-571769876.jpg"
+    },
+    "pageContent": {
+      "history": "Didirikan pada tahun 2024, EventGuard.av bermula dari kebutuhan akan penyedia peralatan visual berkualitas tinggi di Jakarta. Kami tumbuh menjadi mitra terpercaya bagi ratusan penyelenggara acara.",
+      "mission": "Menjadi standar industri dalam penyewaan peralatan multimedia dan dukungan visual event di Indonesia.",
+      "whyChooseUs": [
+        {
+          "title": "Teknologi Terkini",
+          "description": "Peralatan kami selalu diperbarui dengan teknologi terbaru."
+        },
+        {
+          "title": "Tim Ahli",
+          "description": "Didukung oleh teknisi berpengalaman di bidang multimedia."
+        },
+        {
+          "title": "Layanan Prima",
+          "description": "Kepuasan klien adalah prioritas utama kami."
+        }
+      ],
+      "teamImage": "/uploads/image-1770590957978-836565812.jpg",
+      "bottomImage1": "/uploads/image-1770591515688-133109617.jpeg",
+      "bottomImage2": "/uploads/image-1770591522068-804044750.jpg"
+    }
+  },
+  "services": [
+    {
+      "id": "SR-2024-001",
+      "name": "Indoor LED P2.9 High Refresh Rate.",
+      "description": "Videotron indoor P2.9mm dengan refresh rate 3840Hz. Kualitas gambar superior untuk event korporat dan broadcast.\n\nSudah termasuk dengan transport dan pemasangan.",
+      "category": "led-videotron",
+      "price_daily": 850000,
+      "unit": "meter",
+      "inventory_count": 100,
+      "status": "published",
+      "image": "/uploads/image-1770613011366-732325631.jpg"
+    },
+    {
+      "id": "SR-2024-002",
+      "name": "Smart TV 55\" 4K UHD",
+      "description": "Samsung/LG 55 Inch Smart TV 4K. Termasuk standing bracket dan kabel HDMI. Cocok untuk display pameran.",
+      "category": "smart-tv",
+      "price_daily": 750000,
+      "unit": "unit",
+      "inventory_count": 20,
+      "status": "published",
+      "image": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      "id": "SR-2024-003",
+      "name": "Epson 15000 Lumens Laser Projector",
+      "description": "Proyektor laser 3LCD 15.000 lumens. Resolusi WUXGA. Sempurna untuk mapping dan layar besar.",
+      "category": "projector",
+      "price_daily": 5500000,
+      "unit": "unit",
+      "inventory_count": 4,
+      "status": "published",
+      "image": "/uploads/image-1770613019171-599161793.jpg"
+    },
+    {
+      "id": "SR-2024-004",
+      "name": "Digital Signage Kiosk 43 Inch",
+      "description": "Kiosk touch screen vertical 43 inch. Sistem Android/Windows. Ideal untuk direktori acara dan info.",
+      "category": "digital-signage",
+      "price_daily": 1200000,
+      "unit": "unit",
+      "inventory_count": 10,
+      "status": "published",
+      "image": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop"
+    }
+  ],
+  "leads": [
+    {
+      "firstName": "qwer",
+      "lastName": "",
+      "email": "w@gmail.com",
+      "phone": "09892731246",
+      "message": "Great! Now, a little addition: to make the order Date Name Email Phone Details Actions on the leads page in the admin area. Then, on the right side of each email and phone number, there's an icon for copying them.Great! Now, a little addition: to make the order Date Name Email Phone Details Actions on the leads page in the admin area. Then, on the right side of each email and phone number, there's an icon for copying them.",
+      "company": "N/A",
+      "eventType": "General Inquiry",
+      "attendees": "N/A",
+      "services": [],
+      "createdAt": "2026-02-07T17:21:50.312Z",
+      "status": "new",
+      "id": 2
+    },
+    {
+      "firstName": "aa",
+      "lastName": "",
+      "email": "aa@gmail.com",
+      "phone": "+62898777237",
+      "company": "asssasiIi",
+      "eventType": "Quote Request",
+      "attendees": "N/A",
+      "message": "aadad\nssad\n\nEvent Date: 2026-02-28\nLocation: asssasiIi",
+      "services": [
+        "Indoor LED P2.9 High Refresh Rate. (1 meter)"
+      ],
+      "createdAt": "2026-02-09T05:19:41.199Z",
+      "status": "new",
+      "id": 3
+    }
+  ],
+  "stats": {
+    "newLeads": {
+      "value": 12,
+      "trend": 12,
+      "label": "this week"
+    },
+    "pendingQuotes": {
+      "value": 5,
+      "status": "Needs Action",
+      "label": "waiting review"
+    },
+    "activeProjects": {
+      "value": 8,
+      "status": "On Schedule",
+      "label": "currently live"
+    },
+    "revenue": {
+      "value": "Rp 186.750k",
+      "trend": 8,
+      "label": "this month"
+    }
+  },
+  "projects": [
+    {
+      "title": "Smart LED TV",
+      "category": "Smart TV & Display",
+      "date": "",
+      "location": "Jakarta Convention Center",
+      "description": "Penyediaan LED Screen P2.9 seluas 60m2 dan sistem multimedia untuk peluncuran produk teknologi terbaru.",
+      "visible": true,
+      "featured": true,
+      "access": "public",
+      "coverImage": "/uploads/image-1770588505482-579928022.jpg",
+      "gallery": [
+        {
+          "url": "/uploads/image-1770588518839-494623035.jpg",
+          "caption1": "Smart LED TV",
+          "caption2": "Fastival Nusantara"
+        },
+        {
+          "url": "/uploads/image-1770588522890-856807374.jpg",
+          "caption1": "Proyektor 4k Lumens",
+          "caption2": "Festival Nusantara"
+        },
+        {
+          "url": "/uploads/image-1770588525305-860333023.jpg",
+          "caption1": "Digital SIgnage",
+          "caption2": "Fastival Nusantara"
+        },
+        {
+          "url": "/uploads/image-1770588673133-806850436.jpg",
+          "caption1": "LED Screen Outdoor",
+          "caption2": "Fastival Nusantara"
+        }
+      ],
+      "id": "PRJ-2024-001",
+      "galleryCount": 3,
+      "views": 255
+    },
+    {
+      "title": "LED Screen",
+      "category": "Layar LED / Videotron",
+      "date": "",
+      "location": "ICE BSD",
+      "description": "dvcdv dv dsvdsvdsvds",
+      "visible": true,
+      "featured": false,
+      "access": "public",
+      "coverImage": "/uploads/image-1770619485036-626776015.jpg",
+      "gallery": [
+        {
+          "url": "/uploads/image-1770619378411-97438504.jpg",
+          "caption1": "LED Screen",
+          "caption2": "P29"
+        },
+        {
+          "url": "/uploads/image-1770619382781-655940778.jpg",
+          "caption1": "Smart TV",
+          "caption2": "50 inch"
+        },
+        {
+          "url": "/uploads/image-1770619388463-672189841.jpg",
+          "caption1": "Proyektor",
+          "caption2": "4k lumens"
+        },
+        {
+          "url": "/uploads/image-1770619391976-280274665.jpg",
+          "caption1": "Digital Signage",
+          "caption2": "Windows 10"
+        }
+      ],
+      "id": "PRJ-1770619452631",
+      "galleryCount": 4,
+      "views": 1
+    },
+    {
+      "title": "Proyektor",
+      "category": "Proyektor & Screen",
+      "date": "",
+      "location": "Grand HI",
+      "description": "",
+      "visible": true,
+      "featured": false,
+      "access": "public",
+      "coverImage": "/uploads/image-1770726391444-542491949.jpg",
+      "gallery": [
+        {
+          "url": "/uploads/image-1770726375226-873865199.jpg",
+          "caption1": "LED",
+          "caption2": "led outdoor"
+        },
+        {
+          "url": "/uploads/image-1770726379911-267212932.jpg",
+          "caption1": "Smart TV",
+          "caption2": "tv 50inch"
+        },
+        {
+          "url": "/uploads/image-1770726384825-60626337.jpg",
+          "caption1": "Digital Signage",
+          "caption2": "DGS Outdoor"
+        },
+        {
+          "url": "/uploads/image-1770726387891-796120346.jpg",
+          "caption1": "DGS",
+          "caption2": "Digital Signage"
+        }
+      ],
+      "id": "PRJ-1770726456714",
+      "galleryCount": 4
+    },
+    {
+      "title": "Digital Signage",
+      "category": "Digital Signage",
+      "date": "",
+      "location": "Pertamina Hulu",
+      "description": "",
+      "visible": true,
+      "featured": false,
+      "access": "public",
+      "coverImage": "/uploads/image-1770726492425-980029074.jpg",
+      "gallery": [
+        {
+          "url": "/uploads/image-1770726496440-627351739.jpg",
+          "caption1": "LED Screen",
+          "caption2": "Outdoor screen"
+        },
+        {
+          "url": "/uploads/image-1770726499549-80328144.jpg",
+          "caption1": "Smart TV",
+          "caption2": "TV outdoor"
+        },
+        {
+          "url": "/uploads/image-1770726502601-50271240.jpg",
+          "caption1": "Proyektor",
+          "caption2": "Proyektor 4k lumens"
+        },
+        {
+          "url": "/uploads/image-1770726505695-266629620.jpg",
+          "caption1": "Digital Signage",
+          "caption2": "DGS Outdoor"
+        }
+      ],
+      "id": "PRJ-1770726558558",
+      "galleryCount": 4
+    }
+  ],
+  "settings": {
+    "id": 1,
+    "contact": {
+      "headquarters": {
+        "street": "Banten Jl. Musyawarah No.84, Serua, Kec. Ciputat, Kota Tangerang Selatan, Banten 15414",
+        "city": "Jakarta",
+        "zip": "40562"
+      },
+      "email": {
+        "sales": "aa888@gmail.com",
+        "support": ""
+      },
+      "phone": "628999111222",
+      "businessHours": {
+        "weekday": "",
+        "emergency": ""
+      },
+      "mapUrl": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d991.4007364593717!2d106.71247276962974!3d-6.3157737666392135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69e500264411f5%3A0xbb06d8c0db44edca!2sgudang%20kerasipro!5e0!3m2!1sid!2sid!4v1770590837025!5m2!1sid!2sid\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>"
+    },
+    "heroImages": {
+      "home": "",
+      "portfolio": "/uploads/image-1770591563486-702274296.jpg",
+      "about": "/uploads/image-1770591557795-821723132.jpg",
+      "services": "/uploads/image-1770591560953-655647244.jpg",
+      "contact": "/uploads/image-1770591567835-934579013.jpg"
+    },
+    "logo": "/uploads/image-1770728531994-68894581.png",
+    "profile": {
+      "name": "Admin YMedia"
+    }
+  }
+}
