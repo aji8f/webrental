@@ -1,5 +1,5 @@
-import React from 'react';
-import { Outlet, Link, NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 import useSettings from '../hooks/useSettings';
 import { getImageUrl } from '../utils/imageUtils';
 import { useCart } from '../contexts/CartContext';
@@ -7,6 +7,13 @@ import { useCart } from '../contexts/CartContext';
 const PublicLayout = () => {
     const { settings } = useSettings();
     const { cartCount } = useCart();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const location = useLocation();
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [location.pathname]);
 
     return (
         <div className="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-white antialiased flex flex-col font-display">
@@ -58,12 +65,27 @@ const PublicLayout = () => {
                                     </span>
                                 )}
                             </Link>
-                            <button className="text-gray-300 hover:text-white">
-                                <span className="material-symbols-outlined">menu</span>
+                            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-300 hover:text-white">
+                                <span className="material-symbols-outlined">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
                 </div>
+                {/* Mobile Menu */}
+                {mobileMenuOpen && (
+                    <div className="md:hidden bg-[#101622]/95 backdrop-blur-md border-t border-border-dark">
+                        <div className="px-4 py-4 space-y-2">
+                            <NavLink to="/" className={({ isActive }) => `block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-white/5 hover:text-white'}`} end>Beranda</NavLink>
+                            <NavLink to="/services" className={({ isActive }) => `block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-white/5 hover:text-white'}`}>Layanan</NavLink>
+                            <NavLink to="/portfolio" className={({ isActive }) => `block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-white/5 hover:text-white'}`}>Portofolio</NavLink>
+                            <NavLink to="/about" className={({ isActive }) => `block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-white/5 hover:text-white'}`}>Tentang Kami</NavLink>
+                            <NavLink to="/contact" className={({ isActive }) => `block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-white/5 hover:text-white'}`}>Hubungi Kami</NavLink>
+                            <div className="pt-2 border-t border-border-dark">
+                                <Link to="/contact" className="block w-full text-center bg-primary hover:bg-primary-hover text-white text-sm font-bold py-3 px-6 rounded-lg transition-all">Dapatkan Penawaran</Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </nav>
             <main className="flex-grow pt-20">
                 <Outlet />
