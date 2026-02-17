@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const Leads = () => {
     const [leads, setLeads] = useState([]);
@@ -16,7 +17,7 @@ const Leads = () => {
 
     const fetchLeads = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/leads?_sort=createdAt&_order=desc');
+            const response = await axios.get(`${API_BASE_URL}/leads?_sort=createdAt&_order=desc`);
             setLeads(response.data);
             setLoading(false);
         } catch (error) {
@@ -35,7 +36,7 @@ const Leads = () => {
         if (!leadToDelete) return;
 
         try {
-            await axios.delete(`http://localhost:3001/leads/${leadToDelete}`);
+            await axios.delete(`${API_BASE_URL}/leads/${leadToDelete}`);
             setLeads(leads.filter(lead => lead.id !== leadToDelete));
             toast.success('Prospek berhasil dihapus');
             setShowDeleteModal(false);

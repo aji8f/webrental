@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../config/api';
 
 const Dashboard = () => {
     const [stats, setStats] = useState({
@@ -16,9 +17,9 @@ const Dashboard = () => {
         const fetchData = async () => {
             try {
                 const [leadsRes, servicesRes, projectsRes] = await Promise.all([
-                    axios.get('http://localhost:3001/leads?_sort=createdAt&_order=desc'),
-                    axios.get('http://localhost:3001/services'),
-                    axios.get('http://localhost:3001/projects')
+                    axios.get(`${API_BASE_URL}/leads?_sort=createdAt&_order=desc`),
+                    axios.get(`${API_BASE_URL}/services`),
+                    axios.get(`${API_BASE_URL}/projects`)
                 ]);
 
                 const leads = leadsRes.data;

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
@@ -14,7 +15,7 @@ const Categories = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/categories');
+            const response = await axios.get(`${API_BASE_URL}/categories`);
             setCategories(response.data);
         } catch (error) {
             console.error("Error fetching categories:", error);
@@ -24,7 +25,7 @@ const Categories = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
             try {
-                await axios.delete(`http://localhost:3001/categories/${id}`);
+                await axios.delete(`${API_BASE_URL}/categories/${id}`);
                 fetchCategories();
             } catch (error) {
                 console.error("Error deleting category:", error);
@@ -48,10 +49,10 @@ const Categories = () => {
         e.preventDefault();
         try {
             if (isEditMode) {
-                await axios.put(`http://localhost:3001/categories/${currentCategory.id}`, currentCategory);
+                await axios.put(`${API_BASE_URL}/categories/${currentCategory.id}`, currentCategory);
             } else {
                 const newCategory = { ...currentCategory, id: `CAT-${Math.floor(Math.random() * 10000)}` };
-                await axios.post('http://localhost:3001/categories', newCategory);
+                await axios.post(`${API_BASE_URL}/categories`, newCategory);
             }
             setIsModalOpen(false);
             fetchCategories();

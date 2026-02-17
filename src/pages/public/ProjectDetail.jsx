@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getImageUrl } from '../../utils/imageUtils';
+import API_BASE_URL from '../../config/api';
 
 const ProjectDetail = () => {
     const { id } = useParams();
@@ -11,14 +12,14 @@ const ProjectDetail = () => {
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/projects/${id}`);
+                const response = await axios.get(`${API_BASE_URL}/projects/${id}`);
                 setProject(response.data);
                 setLoading(false);
 
                 // Increment views silently
                 try {
                     const currentViews = response.data.views || 0;
-                    await axios.patch(`http://localhost:3001/projects/${id}`, {
+                    await axios.patch(`${API_BASE_URL}/projects/${id}`, {
                         views: currentViews + 1
                     });
                 } catch (viewError) {

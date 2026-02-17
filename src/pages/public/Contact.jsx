@@ -3,6 +3,31 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
+import API_BASE_URL from '../../config/api';
+
+
+// Memoized Map Component to prevent re-renders on form input
+const MapDisplay = React.memo(({ mapUrl }) => {
+    return (
+        <div className="bg-surface-dark rounded-2xl border border-border-dark overflow-hidden shadow-lg h-64 relative group">
+            {mapUrl ? (
+                <div dangerouslySetInnerHTML={{ __html: mapUrl }} className="w-full h-full [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0" />
+            ) : (
+                <>
+                    <div className="absolute inset-0 bg-gray-800 flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAaKe4KMikPm67Wqbg2jfQs1zcceJhFpOOGrAYFS_EMPRShv4CnaVQNo1Dl1Upu-9KZgqJVOzmfRUyhEY45RlyQG8eW29SjvADIgyvKakcet657LbjaRRa70_laK8qdxRNDyk38RPFLD_amLcBNPgFTFF9aoyA6E6wKjajtFG0aG5-dRv1p_1hym4ATk8EskyJEwpFvidSfrjRDrLW3aeTEGcF0uIwm6GirWnbDoog1HY6qBpBBBJ5NV0BL0UeCmD70EbcJCjrEvKg')", filter: "grayscale(100%) opacity(0.3)" }}></div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                        <div className="p-3 bg-surface-dark rounded-full border border-border-dark shadow-xl text-primary animate-bounce">
+                            <span className="material-symbols-outlined text-2xl">location_on</span>
+                        </div>
+                        <a className="bg-surface-dark/90 hover:bg-primary hover:text-white hover:border-primary text-gray-300 text-xs font-medium py-2 px-4 rounded-full border border-border-dark transition-all backdrop-blur-sm" href="#">
+                            Buka di Google Maps
+                        </a>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+});
 
 const Contact = () => {
     const { settings } = useSettings();
@@ -102,7 +127,7 @@ const Contact = () => {
                 status: 'new'
             };
 
-            await axios.post('http://localhost:3001/leads', leadData);
+            await axios.post(`${API_BASE_URL}/leads`, leadData);
 
             // Set rate limit timestamp
             localStorage.setItem('lastContactSubmit', Date.now().toString());
@@ -322,23 +347,7 @@ const Contact = () => {
                                 </li>
                             </ul>
                         </div>
-                        <div className="bg-surface-dark rounded-2xl border border-border-dark overflow-hidden shadow-lg h-64 relative group">
-                            {settings?.contact?.mapUrl ? (
-                                <div dangerouslySetInnerHTML={{ __html: settings.contact.mapUrl }} className="w-full h-full [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0" />
-                            ) : (
-                                <>
-                                    <div className="absolute inset-0 bg-gray-800 flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAaKe4KMikPm67Wqbg2jfQs1zcceJhFpOOGrAYFS_EMPRShv4CnaVQNo1Dl1Upu-9KZgqJVOzmfRUyhEY45RlyQG8eW29SjvADIgyvKakcet657LbjaRRa70_laK8qdxRNDyk38RPFLD_amLcBNPgFTFF9aoyA6E6wKjajtFG0aG5-dRv1p_1hym4ATk8EskyJEwpFvidSfrjRDrLW3aeTEGcF0uIwm6GirWnbDoog1HY6qBpBBBJ5NV0BL0UeCmD70EbcJCjrEvKg')", filter: "grayscale(100%) opacity(0.3)" }}></div>
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                                        <div className="p-3 bg-surface-dark rounded-full border border-border-dark shadow-xl text-primary animate-bounce">
-                                            <span className="material-symbols-outlined text-2xl">location_on</span>
-                                        </div>
-                                        <a className="bg-surface-dark/90 hover:bg-primary hover:text-white hover:border-primary text-gray-300 text-xs font-medium py-2 px-4 rounded-full border border-border-dark transition-all backdrop-blur-sm" href="#">
-                                            Buka di Google Maps
-                                        </a>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                        <MapDisplay mapUrl={settings?.contact?.mapUrl} />
                         <div className="bg-gradient-to-br from-surface-dark to-background-dark rounded-2xl border border-border-dark p-6 text-center">
                             <span className="material-symbols-outlined text-4xl text-gray-500 mb-3">verified_user</span>
                             <h4 className="text-white font-bold mb-2">Aman & Rahasia</h4>

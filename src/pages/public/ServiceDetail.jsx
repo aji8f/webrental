@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getImageUrl } from '../../utils/imageUtils';
 import { useCart } from '../../contexts/CartContext';
 import { toast } from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const ServiceDetail = () => {
     const { id } = useParams();
@@ -23,14 +24,14 @@ const ServiceDetail = () => {
     const fetchServiceData = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:3001/services/${id}`);
+            const response = await axios.get(`${API_BASE_URL}/services/${id}`);
             setService(response.data);
             setActiveImage(response.data.image);
 
             // Fetch related services if any
             if (response.data.relatedIds && response.data.relatedIds.length > 0) {
                 const relatedPromises = response.data.relatedIds.map(rId =>
-                    axios.get(`http://localhost:3001/services/${rId}`).catch(() => null)
+                    axios.get(`${API_BASE_URL}/services/${rId}`).catch(() => null)
                 );
                 const relatedResponses = await Promise.all(relatedPromises);
                 const validRelated = relatedResponses

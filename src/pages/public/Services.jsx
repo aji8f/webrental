@@ -5,6 +5,7 @@ import { getImageUrl } from '../../utils/imageUtils';
 import useSettings from '../../hooks/useSettings';
 import { useCart } from '../../contexts/CartContext';
 import { toast } from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const Services = () => {
     const { settings } = useSettings();
@@ -35,7 +36,7 @@ const Services = () => {
             <span className="material-symbols-outlined text-lg">add</span>
         </button>
         try {
-            const response = await axios.get('http://localhost:3001/services');
+            const response = await axios.get(`${API_BASE_URL}/services`);
             setServices(response.data);
             setLoading(false);
         } catch (error) {
@@ -46,7 +47,7 @@ const Services = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/categories');
+            const response = await axios.get(`${API_BASE_URL}/categories`);
             setCategories(response.data);
         } catch (error) {
             console.error("Error fetching categories:", error);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import useSettings from '../../hooks/useSettings';
+import API_BASE_URL from '../../config/api';
 
 const About = () => {
     const { settings } = useSettings();
@@ -10,7 +11,7 @@ const About = () => {
     useEffect(() => {
         const fetchAboutData = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/about');
+                const response = await axios.get(`${API_BASE_URL}/about`);
                 setAboutData(response.data);
             } catch (error) {
                 console.error('Error fetching about data:', error);

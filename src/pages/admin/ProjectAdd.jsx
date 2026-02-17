@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getImageUrl } from '../../utils/imageUtils';
+import API_BASE_URL from '../../config/api';
 
 const ProjectAdd = () => {
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ const ProjectAdd = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/categories');
+                const response = await axios.get(`${API_BASE_URL}/categories`);
                 // Use all categories (master category list)
                 setCategories(response.data);
             } catch (error) {
@@ -50,7 +51,7 @@ const ProjectAdd = () => {
             uploadFormData.append('image', file);
 
             try {
-                const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+                const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -75,7 +76,7 @@ const ProjectAdd = () => {
             uploadFormData.append('image', file);
 
             try {
-                const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+                const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -116,7 +117,7 @@ const ProjectAdd = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post('http://localhost:3001/projects', {
+            await axios.post(`${API_BASE_URL}/projects`, {
                 ...formData,
                 id: `PRJ-${Date.now()}`,
                 galleryCount: formData.gallery.length

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
+import API_BASE_URL from '../../config/api';
 
 const Home = () => {
     const { settings } = useSettings();
@@ -13,7 +14,7 @@ const Home = () => {
     useEffect(() => {
         const fetchRecentProjects = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/projects?_limit=4&_sort=date&_order=desc');
+                const response = await axios.get(`${API_BASE_URL}/projects?_limit=4&_sort=date&_order=desc`);
                 setRecentProjects(response.data.filter(p => p.visible !== false));
             } catch (error) {
                 console.error('Error fetching recent projects:', error);
@@ -22,7 +23,7 @@ const Home = () => {
 
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/categories');
+                const response = await axios.get(`${API_BASE_URL}/categories`);
                 setCategories(response.data.filter(c => c.type === 'service'));
             } catch (error) {
                 console.error('Error fetching categories:', error);
@@ -31,7 +32,7 @@ const Home = () => {
 
         const fetchAboutData = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/about');
+                const response = await axios.get(`${API_BASE_URL}/about`);
                 setAboutData(response.data);
             } catch (error) {
                 console.error('Error fetching about data:', error);

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useCart } from '../../contexts/CartContext';
 import { getImageUrl } from '../../utils/imageUtils';
 import { toast } from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const Cart = () => {
     const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
@@ -54,7 +55,7 @@ const Cart = () => {
                 status: 'new'
             };
 
-            await axios.post('http://localhost:3001/leads', leadData);
+            await axios.post(`${API_BASE_URL}/leads`, leadData);
 
             toast.dismiss(loadingToast);
             toast.success('Permintaan penawaran terkirim! Tim kami akan segera menghubungi Anda.');

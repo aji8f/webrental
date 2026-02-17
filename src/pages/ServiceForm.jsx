@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { getImageUrl } from '../utils/imageUtils';
+import API_BASE_URL from '../config/api';
 
 const ServiceForm = () => {
     const { id } = useParams();
@@ -31,7 +32,7 @@ const ServiceForm = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/categories');
+            const response = await axios.get(`${API_BASE_URL}/categories`);
             setCategories(response.data);
         } catch (error) {
             console.error("Error fetching categories:", error);
@@ -40,7 +41,7 @@ const ServiceForm = () => {
 
     const fetchServiceDetails = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/services/${id}`);
+            const response = await axios.get(`${API_BASE_URL}/services/${id}`);
             // Map the API data to form data structure if needed
             setFormData(response.data);
             if (response.data.image) {
@@ -96,7 +97,7 @@ const ServiceForm = () => {
         uploadFormData.append('image', file);
 
         try {
-            const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+            const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -121,11 +122,11 @@ const ServiceForm = () => {
         e.preventDefault();
         try {
             if (isEditMode) {
-                await axios.put(`http://localhost:3001/services/${id}`, formData);
+                await axios.put(`${API_BASE_URL}/services/${id}`, formData);
             } else {
                 // Generate a random ID for new items (in a real backend this is automatic)
                 const newService = { ...formData, id: `SR-2023-${Math.floor(Math.random() * 1000)}` };
-                await axios.post('http://localhost:3001/services', newService);
+                await axios.post(`${API_BASE_URL}/services`, newService);
             }
             navigate('/dashboard/services');
         } catch (error) {

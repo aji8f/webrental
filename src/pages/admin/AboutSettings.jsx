@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const AboutSettings = () => {
     const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ const AboutSettings = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/about');
+            const response = await axios.get(`${API_BASE_URL}/about`);
             if (response.data) {
                 setFormData(response.data);
             }
@@ -62,7 +63,7 @@ const AboutSettings = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put('http://localhost:3001/about', formData);
+            await axios.put(`${API_BASE_URL}/about`, formData);
             toast.success('Pengaturan berhasil disimpan');
         } catch (error) {
             console.error('Error saving settings:', error);
@@ -81,7 +82,7 @@ const AboutSettings = () => {
         formDataObj.append('image', file);
 
         try {
-            const response = await axios.post('http://localhost:3001/upload', formDataObj, {
+            const response = await axios.post(`${API_BASE_URL}/upload`, formDataObj, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

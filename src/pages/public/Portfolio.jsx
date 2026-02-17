@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
+import API_BASE_URL from '../../config/api';
 
 const Portfolio = () => {
     const { settings } = useSettings();
@@ -14,7 +15,7 @@ const Portfolio = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/projects');
+                const response = await axios.get(`${API_BASE_URL}/projects`);
                 setProjects(response.data.filter(p => p.visible !== false)); // Only show visible projects
                 setLoading(false);
             } catch (error) {

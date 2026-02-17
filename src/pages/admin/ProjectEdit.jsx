@@ -4,6 +4,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import GalleryModal from '../../components/admin/GalleryModal';
 import { getImageUrl } from '../../utils/imageUtils';
+import API_BASE_URL from '../../config/api';
 
 const ProjectEdit = () => {
     const { id } = useParams();
@@ -27,7 +28,7 @@ const ProjectEdit = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/categories');
+                const response = await axios.get(`${API_BASE_URL}/categories`);
                 // Use all categories (master category list)
                 setCategories(response.data);
             } catch (error) {
@@ -43,7 +44,7 @@ const ProjectEdit = () => {
 
     const fetchProject = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/projects/${id}`);
+            const response = await axios.get(`${API_BASE_URL}/projects/${id}`);
             // Ensure gallery is an array and items are objects
             const gallery = (response.data.gallery || []).map(item =>
                 typeof item === 'string' ? { url: item, caption1: '', caption2: '' } : item
@@ -74,7 +75,7 @@ const ProjectEdit = () => {
         e.preventDefault();
         setSaving(true);
         try {
-            await axios.put(`http://localhost:3001/projects/${id}`, formData);
+            await axios.put(`${API_BASE_URL}/projects/${id}`, formData);
             setSaving(false);
             toast.success('Proyek berhasil diperbarui!');
             navigate('/dashboard/portfolio');
@@ -92,7 +93,7 @@ const ProjectEdit = () => {
             uploadFormData.append('image', file);
 
             try {
-                const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+                const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -117,7 +118,7 @@ const ProjectEdit = () => {
             uploadFormData.append('image', file);
 
             try {
-                const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+                const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -166,7 +167,7 @@ const ProjectEdit = () => {
     const handleDelete = async () => {
         if (window.confirm('Apakah Anda yakin ingin menghapus proyek ini? Tindakan ini tidak dapat dibatalkan.')) {
             try {
-                await axios.delete(`http://localhost:3001/projects/${id}`);
+                await axios.delete(`${API_BASE_URL}/projects/${id}`);
                 navigate('/dashboard/portfolio');
             } catch (error) {
                 console.error('Error deleting project:', error);

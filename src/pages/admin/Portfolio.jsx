@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const Portfolio = () => {
     const [projects, setProjects] = useState([]);
@@ -17,7 +18,7 @@ const Portfolio = () => {
 
     const fetchProjects = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/projects');
+            const response = await axios.get(`${API_BASE_URL}/projects`);
             setProjects(response.data);
             if (loading) setLoading(false);
         } catch (error) {
@@ -29,7 +30,7 @@ const Portfolio = () => {
     const toggleVisibility = async (id, currentStatus) => {
         try {
             const newStatus = !currentStatus;
-            await axios.patch(`http://localhost:3001/projects/${id}`, { visible: newStatus });
+            await axios.patch(`${API_BASE_URL}/projects/${id}`, { visible: newStatus });
             setProjects(projects.map(project =>
                 project.id === id ? { ...project, visible: newStatus } : project
             ));

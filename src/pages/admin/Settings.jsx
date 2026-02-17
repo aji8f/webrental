@@ -3,6 +3,7 @@ import useSettings from '../../hooks/useSettings';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
 import { getImageUrl } from '../../utils/imageUtils';
+import API_BASE_URL from '../../config/api';
 
 const Settings = () => {
     const { settings, loading, error, updateSettings } = useSettings();
@@ -31,7 +32,7 @@ const Settings = () => {
     const fetchServices = async () => {
         try {
             setLoadingServices(true);
-            const response = await axios.get('http://localhost:3001/categories');
+            const response = await axios.get(`${API_BASE_URL}/categories`);
             // Filter only service type categories
             const serviceCategories = response.data.filter(cat => cat.type === 'service');
             setServices(serviceCategories);
@@ -50,7 +51,7 @@ const Settings = () => {
         try {
             if (editingService.id) {
                 // Update existing
-                await axios.put(`http://localhost:3001/categories/${editingService.id}`, editingService);
+                await axios.put(`${API_BASE_URL}/categories/${editingService.id}`, editingService);
                 toast.success('Kartu layanan diperbarui');
             } else {
                 // Create new
@@ -61,7 +62,7 @@ const Settings = () => {
                     type: 'service',
                     count: 0 // Default count
                 };
-                await axios.post('http://localhost:3001/categories', newService);
+                await axios.post(`${API_BASE_URL}/categories`, newService);
                 toast.success('Kartu layanan dibuat');
             }
             setEditingService(null);
@@ -78,7 +79,7 @@ const Settings = () => {
         if (!window.confirm('Apakah Anda yakin ingin menghapus kartu layanan ini?')) return;
 
         try {
-            await axios.delete(`http://localhost:3001/categories/${id}`);
+            await axios.delete(`${API_BASE_URL}/categories/${id}`);
             toast.success('Kartu layanan dihapus');
             fetchServices();
         } catch (error) {
@@ -235,7 +236,7 @@ const Settings = () => {
                                                                         const uploadFormData = new FormData();
                                                                         uploadFormData.append('image', file);
                                                                         try {
-                                                                            const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+                                                                            const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                                                                                 headers: { 'Content-Type': 'multipart/form-data' }
                                                                             });
                                                                             setFormData(prev => ({ ...prev, logo: response.data.url }));
@@ -402,7 +403,7 @@ const Settings = () => {
                                                                             uploadFormData.append('image', file);
 
                                                                             try {
-                                                                                const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+                                                                                const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                                                                                     headers: {
                                                                                         'Content-Type': 'multipart/form-data'
                                                                                     }
@@ -632,7 +633,7 @@ const Settings = () => {
                                                                         const uploadFormData = new FormData();
                                                                         uploadFormData.append('image', file);
                                                                         try {
-                                                                            const response = await axios.post('http://localhost:3001/upload', uploadFormData, {
+                                                                            const response = await axios.post(`${API_BASE_URL}/upload`, uploadFormData, {
                                                                                 headers: { 'Content-Type': 'multipart/form-data' }
                                                                             });
                                                                             setEditingService({ ...editingService, image: response.data.url });

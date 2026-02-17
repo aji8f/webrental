@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getImageUrl } from '../utils/imageUtils';
+import API_BASE_URL from '../config/api';
 
 const Services = () => {
     const [services, setServices] = useState([]);
@@ -13,7 +14,7 @@ const Services = () => {
 
     const fetchServices = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/services');
+            const response = await axios.get(`${API_BASE_URL}/services`);
             setServices(response.data);
         } catch (error) {
             console.error("Error fetching services:", error);
@@ -23,7 +24,7 @@ const Services = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Apakah Anda yakin ingin menghapus layanan ini?')) {
             try {
-                await axios.delete(`http://localhost:3001/services/${id}`);
+                await axios.delete(`${API_BASE_URL}/services/${id}`);
                 fetchServices(); // Refresh list
             } catch (error) {
                 console.error("Error deleting service:", error);

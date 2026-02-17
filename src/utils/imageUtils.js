@@ -1,3 +1,5 @@
+import API_BASE_URL from '../config/api';
+
 export const getImageUrl = (path) => {
     if (!path) return '';
 
@@ -12,6 +14,5 @@ export const getImageUrl = (path) => {
     }
 
     // If it's a local path (starts with /uploads), append the backend URL
-    // Adjust localhost:3001 to your actual backend URL if different
-    return `http://localhost:3001${path}`;
+    return `${API_BASE_URL}${path}`;
 };

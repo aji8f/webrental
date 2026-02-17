@@ -29,8 +29,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from public directory
+// Serve static files from public directory (uploaded images)
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve built frontend (production)
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Database Connection
 mongoose.connect(MONGODB_URI)
@@ -328,7 +331,12 @@ app.put('/about', async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
+// SPA Fallback: serve index.html for all non-API routes (must be AFTER API routes)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`File uploads endpoint: POST http://localhost:${PORT}/upload`);
 });
