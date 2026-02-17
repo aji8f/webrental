@@ -332,7 +332,7 @@ app.put('/about', async (req, res) => {
 
 
 // SPA Fallback: serve index.html for all non-API routes (must be AFTER API routes)
-app.get('*', (req, res) => {
+app.get('/{*splat}', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
