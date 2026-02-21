@@ -6,6 +6,9 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import Category from './models/Category.js';
 import Service from './models/Service.js';
 import Lead from './models/Lead.js';
@@ -23,6 +26,20 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 // Use webrentaldb as confirmed by user/migration success
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/webrentaldb';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-very-secure-fallback-secret-key-12345'; // Recommendation: set this in .env
+
+// Security Middleware
+app.use(helmet({
+    contentSecurityPolicy: false, // Disabled for now to prevent issues with React SPA
+    crossOriginEmbedderPolicy: false
+}));
+
+// Rate limiting for auth routes
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // Limit each IP to 10 login requests per window
+    message: { error: 'Terlalu banyak percobaan login, silakan coba lagi setelah 15 menit' }
+});
 
 // Middleware
 app.use(cors());
@@ -59,7 +76,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // File Upload Route
-app.post('/upload', upload.single('image'), (req, res) => {
+// Protected: only admins can upload files
+app.post('/upload', authenticateToken, upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
@@ -76,7 +94,35 @@ const getSortOption = (req) => {
     return {};
 };
 
+// Authentication Middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Format: "Bearer TOKEN"
+
+    if (!token) return res.status(401).json({ error: 'Akses ditolak. Token tidak ditemukan.' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Token tidak valid atau sudah kadaluarsa.' });
+        req.user = user;
+        next();
+    });
+};
+
 // API Routes
+
+// --- Authentication ---
+app.post('/api/login', authLimiter, (req, res) => {
+    const { email, password } = req.body;
+
+    // Hardcoded admin credentials as requested
+    if (email === 'alfa@gmail.com' && password === 'YMedia88') {
+        // Generate JWT token (expires in 24 hours)
+        const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+        res.json({ token, user: { email, role: 'admin' } });
+    } else {
+        res.status(401).json({ error: 'Email atau password salah' });
+    }
+});
 
 // Categories
 app.get('/categories', async (req, res) => {
@@ -98,7 +144,8 @@ app.get('/categories/:id', async (req, res) => {
     }
 });
 
-app.post('/categories', async (req, res) => {
+// Protected
+app.post('/categories', authenticateToken, async (req, res) => {
     try {
         const category = new Category(req.body);
         await category.save();
@@ -108,7 +155,8 @@ app.post('/categories', async (req, res) => {
     }
 });
 
-app.put('/categories/:id', async (req, res) => {
+// Protected
+app.put('/categories/:id', authenticateToken, async (req, res) => {
     try {
         const category = await Category.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
         if (!category) return res.status(404).json({ error: 'Category not found' });
@@ -118,7 +166,8 @@ app.put('/categories/:id', async (req, res) => {
     }
 });
 
-app.delete('/categories/:id', async (req, res) => {
+// Protected
+app.delete('/categories/:id', authenticateToken, async (req, res) => {
     try {
         const category = await Category.findOneAndDelete({ id: req.params.id });
         if (!category) return res.status(404).json({ error: 'Category not found' });
@@ -156,7 +205,8 @@ app.get('/services/:id', async (req, res) => {
     }
 });
 
-app.post('/services', async (req, res) => {
+// Protected
+app.post('/services', authenticateToken, async (req, res) => {
     try {
         const service = new Service(req.body);
         await service.save();
@@ -166,7 +216,8 @@ app.post('/services', async (req, res) => {
     }
 });
 
-app.put('/services/:id', async (req, res) => {
+// Protected
+app.put('/services/:id', authenticateToken, async (req, res) => {
     try {
         const service = await Service.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
         if (!service) return res.status(404).json({ error: 'Service not found' });
@@ -176,7 +227,8 @@ app.put('/services/:id', async (req, res) => {
     }
 });
 
-app.delete('/services/:id', async (req, res) => {
+// Protected
+app.delete('/services/:id', authenticateToken, async (req, res) => {
     try {
         const service = await Service.findOneAndDelete({ id: req.params.id });
         if (!service) return res.status(404).json({ error: 'Service not found' });
@@ -190,7 +242,8 @@ app.delete('/services/:id', async (req, res) => {
 // Leads
 // NOTE: Leads use standard Mongo _id but expose it as 'id' in JSON.
 // Frontend sends DELETE /leads/:id which is likely the Mongo ID string.
-app.get('/leads', async (req, res) => {
+// Protected (only Admin can view leads)
+app.get('/leads', authenticateToken, async (req, res) => {
     try {
         const leads = await Lead.find().sort(getSortOption(req));
         res.json(leads);
@@ -199,6 +252,7 @@ app.get('/leads', async (req, res) => {
     }
 });
 
+// Public (anyone can submit a lead via contact form)
 app.post('/leads', async (req, res) => {
     try {
         const lead = new Lead(req.body);
@@ -209,7 +263,8 @@ app.post('/leads', async (req, res) => {
     }
 });
 
-app.delete('/leads/:id', async (req, res) => {
+// Protected
+app.delete('/leads/:id', authenticateToken, async (req, res) => {
     try {
         // Find by _id
         const lead = await Lead.findByIdAndDelete(req.params.id);
@@ -241,7 +296,8 @@ app.get('/projects/:id', async (req, res) => {
     }
 });
 
-app.post('/projects', async (req, res) => {
+// Protected
+app.post('/projects', authenticateToken, async (req, res) => {
     try {
         const project = new Project(req.body);
         await project.save();
@@ -251,7 +307,8 @@ app.post('/projects', async (req, res) => {
     }
 });
 
-app.put('/projects/:id', async (req, res) => { // Full update
+// Protected
+app.put('/projects/:id', authenticateToken, async (req, res) => { // Full update
     try {
         const project = await Project.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
         if (!project) return res.status(404).json({ error: 'Project not found' });
@@ -261,7 +318,8 @@ app.put('/projects/:id', async (req, res) => { // Full update
     }
 });
 
-app.patch('/projects/:id', async (req, res) => { // Partial update (visibility toggle)
+// Protected
+app.patch('/projects/:id', authenticateToken, async (req, res) => { // Partial update (visibility toggle)
     try {
         const project = await Project.findOneAndUpdate({ id: req.params.id }, { $set: req.body }, { new: true });
         if (!project) return res.status(404).json({ error: 'Project not found' });
@@ -271,7 +329,8 @@ app.patch('/projects/:id', async (req, res) => { // Partial update (visibility t
     }
 });
 
-app.delete('/projects/:id', async (req, res) => {
+// Protected
+app.delete('/projects/:id', authenticateToken, async (req, res) => {
     try {
         const project = await Project.findOneAndDelete({ id: req.params.id });
         if (!project) return res.status(404).json({ error: 'Project not found' });
@@ -292,7 +351,8 @@ app.get('/settings', async (req, res) => {
     }
 });
 
-app.put('/settings', async (req, res) => {
+// Protected
+app.put('/settings', authenticateToken, async (req, res) => {
     try {
         const settings = await Setting.findOneAndUpdate({}, req.body, { new: true, upsert: true });
         res.json(settings);
@@ -321,7 +381,8 @@ app.get('/about', async (req, res) => {
     }
 });
 
-app.put('/about', async (req, res) => {
+// Protected
+app.put('/about', authenticateToken, async (req, res) => {
     try {
         const about = await About.findOneAndUpdate({}, req.body, { new: true, upsert: true });
         res.json(about);

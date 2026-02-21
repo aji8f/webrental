@@ -1,23 +1,56 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const AdminLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const handleSubmit = (e) => {
+    // The location we want to redirect to after successful login
+    const from = location.state?.from?.pathname || '/dashboard';
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
-        // Credential Check
-        if (email === 'alfa@gmail.com' && password === 'YMedia88') {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/api/login`, {
+                email,
+                password
+            });
+
+            const { token, user } = response.data;
+
+            // Store token
+            if (rememberMe) {
+                localStorage.setItem('adminToken', token);
+            } else {
+                // For simplicity, we'll store it in localStorage but a real app might
+                // use sessionStorage for non-remembered logins or secure HttpOnly cookies
+                localStorage.setItem('adminToken', token);
+            }
+
             toast.success('Login successful');
-            navigate('/dashboard');
-        } else {
-            toast.error('Invalid email or password');
+            // Navigate to where they were trying to go, or dashboard by default
+            navigate(from, { replace: true });
+        } catch (error) {
+            console.error('Login error:', error);
+            if (error.response?.status === 401) {
+                toast.error('Invalid email or password');
+            } else if (error.response?.status === 429) {
+                toast.error(error.response.data.error || 'Too many login attempts. Please try again later.');
+            } else {
+                toast.error('Server error. Please try again later.');
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -99,8 +132,19 @@ const AdminLogin = () => {
                                     <a className="text-primary hover:text-primary-hover text-sm font-medium hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 rounded px-1" href="#">Forgot Password?</a>
                                 </div>
                                 {/* Submit Button */}
-                                <button className="mt-2 flex w-full items-center justify-center rounded-lg bg-primary hover:bg-primary-hover h-11 px-4 text-white text-sm font-bold leading-normal tracking-wide shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-surface-dark" type="submit">
-                                    Secure Login
+                                <button
+                                    className="mt-2 flex w-full items-center justify-center rounded-lg bg-primary hover:bg-primary-hover h-11 px-4 text-white text-sm font-bold leading-normal tracking-wide shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-surface-dark disabled:opacity-70 disabled:cursor-not-allowed"
+                                    type="submit"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
+                                            <span>Authenticating...</span>
+                                        </div>
+                                    ) : (
+                                        'Secure Login'
+                                    )}
                                 </button>
                             </form>
                         </div>

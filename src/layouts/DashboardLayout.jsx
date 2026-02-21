@@ -1,13 +1,20 @@
-import React from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import useSettings from '../hooks/useSettings';
 import { getImageUrl } from '../utils/imageUtils';
 import axios from 'axios'; // Import axios
 import { toast } from 'react-hot-toast'; // Import toast
 
 const DashboardLayout = () => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const location = useLocation();
     const navigate = useNavigate();
     const { settings, updateSettings } = useSettings();
+
+    const handleLogout = () => {
+        localStorage.removeItem('adminToken');
+        navigate('/admin');
+    };
 
     const handleEditName = async () => {
         const currentName = settings?.profile?.name || 'Marcus Reed';
@@ -34,11 +41,6 @@ const DashboardLayout = () => {
                 toast.error('Failed to update name');
             }
         }
-    };
-
-    const handleLogout = () => {
-        // In a real app, clear auth tokens here
-        navigate('/');
     };
 
     return (
@@ -80,42 +82,42 @@ const DashboardLayout = () => {
                     <NavLink
                         to="/dashboard"
                         end
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`}
+                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
                     >
                         <span className="material-symbols-outlined text-[20px]">dashboard</span>
                         <span className="text-sm font-medium">Dashboard</span>
                     </NavLink>
                     <NavLink
                         to="/dashboard/services"
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`}
+                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
                     >
                         <span className="material-symbols-outlined text-[20px]">inventory_2</span>
                         <span className="text-sm font-medium">Layanan</span>
                     </NavLink>
                     <NavLink
                         to="/dashboard/categories"
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`}
+                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
                     >
                         <span className="material-symbols-outlined text-[20px]">category</span>
                         <span className="text-sm font-medium">Kategori</span>
                     </NavLink>
                     <NavLink
                         to="/dashboard/portfolio"
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`}
+                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
                     >
                         <span className="material-symbols-outlined text-[20px]">work</span>
                         <span className="text-sm font-medium">Portofolio</span>
                     </NavLink>
                     <NavLink
                         to="/dashboard/about"
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`}
+                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
                     >
                         <span className="material-symbols-outlined text-[20px]">info</span>
                         <span className="text-sm font-medium">Tentang</span>
                     </NavLink>
                     <NavLink
                         to="/dashboard/leads"
-                        className={({ isActive }) => `flex items-center justify-between px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`}
+                        className={({ isActive }) => `flex items - center justify - between px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
                     >
                         <div className="flex items-center gap-3">
                             <span className="material-symbols-outlined text-[20px]">inbox</span>
@@ -125,7 +127,7 @@ const DashboardLayout = () => {
                     </NavLink>
                     <NavLink
                         to="/dashboard/settings"
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-colors mt-6 ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`}
+                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors mt - 6 ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
                     >
                         <span className="material-symbols-outlined text-[20px]">settings</span>
                         <span className="text-sm font-medium">Pengaturan</span>

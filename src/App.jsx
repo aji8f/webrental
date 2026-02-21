@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import axios from 'axios';
 import AdminLogin from './components/AdminLogin';
+import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import PublicLayout from './layouts/PublicLayout';
 import Dashboard from './pages/Dashboard';
@@ -24,6 +26,35 @@ import AboutSettings from './pages/admin/AboutSettings';
 import { Toaster } from 'react-hot-toast';
 
 import { CartProvider } from './contexts/CartContext';
+
+// Setup Axios Interceptor for JWT Token
+axios.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('adminToken');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Global interceptor for 401/403 errors across the app
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            // Only clear token and redirect if we are in the admin area
+            if (window.location.pathname.startsWith('/dashboard')) {
+                localStorage.removeItem('adminToken');
+                window.location.href = '/admin';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 
 function App() {
     return (
@@ -60,7 +91,13 @@ function App() {
 
                     {/* Admin Routes */}
                     <Route path="/admin" element={<AdminLogin />} />
-                    <Route path="/dashboard" element={<DashboardLayout />}>
+
+                    {/* Protected Dashboard Routes */}
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute>
+                            <DashboardLayout />
+                        </ProtectedRoute>
+                    }>
                         <Route index element={<Dashboard />} />
                         <Route path="services" element={<Services />} />
                         <Route path="services/new" element={<ServiceForm />} />
