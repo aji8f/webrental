@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { body, validationResult } from 'express-validator';
 import Category from './models/Category.js';
 import Service from './models/Service.js';
 import Lead from './models/Lead.js';
@@ -253,7 +254,29 @@ app.get('/leads', authenticateToken, async (req, res) => {
 });
 
 // Public (anyone can submit a lead via contact form)
-app.post('/leads', async (req, res) => {
+app.post('/leads', [
+    // Validation & Sanitization
+    body('firstName').trim().escape().notEmpty().withMessage('First name is required'),
+    body('lastName').trim().escape().optional(),
+    body('email').trim().isEmail().normalizeEmail().withMessage('Valid email is required'),
+    body('phone').trim().escape().optional(),
+    body('company').trim().escape().optional(),
+    body('eventType').trim().escape().optional(),
+    body('message').trim().escape().optional(),
+    body('bot_check').custom((value) => {
+        // Honeypot check
+        if (value) {
+            throw new Error('Bot detected');
+        }
+        return true;
+    })
+], async (req, res) => {
+    // Check validation results
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: 'Validation failed', details: errors.array() });
+    }
+
     try {
         const lead = new Lead(req.body);
         await lead.save();
