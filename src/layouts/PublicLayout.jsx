@@ -3,6 +3,7 @@ import { Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 import useSettings from '../hooks/useSettings';
 import { getImageUrl } from '../utils/imageUtils';
 import { useCart } from '../contexts/CartContext';
+import FloatingWhatsApp from '../components/FloatingWhatsApp';
 
 const PublicLayout = () => {
     const { settings } = useSettings();
@@ -175,6 +176,8 @@ const PublicLayout = () => {
                     </div>
                 </div>
             </footer>
+
+            <FloatingWhatsApp />
         </div>
     );
 };
