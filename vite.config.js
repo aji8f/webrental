@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: [
+      'waiting-capability-federation-pants.trycloudflare.com'
+    ], // <--- WAJIB ada koma di sini!
     proxy: {
       '/categories': 'http://localhost:3001',
       '/services': 'http://localhost:3001',

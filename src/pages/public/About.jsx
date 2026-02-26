@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import useSettings from '../../hooks/useSettings';
 import API_BASE_URL from '../../config/api';
+import SEO from '../../components/SEO';
 
 const About = () => {
     const { settings } = useSettings();
@@ -24,6 +25,10 @@ const About = () => {
 
     return (
         <>
+            <SEO
+                title="Tentang Kami - Vendor Visual"
+                description="Pelajari lebih lanjut tentang kami, penyedia layanan visual dan multimedia terbaik dengan pengalaman lebih dari 12 tahun."
+            />
             <section className="relative min-h-[400px] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-background-dark/80 via-background-dark/70 to-background-dark z-10"></div>

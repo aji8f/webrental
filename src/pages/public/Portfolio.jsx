@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
 import API_BASE_URL from '../../config/api';
+import SEO from '../../components/SEO';
 
 const Portfolio = () => {
     const { settings } = useSettings();
@@ -46,6 +47,10 @@ const Portfolio = () => {
 
     return (
         <>
+            <SEO
+                title="Portofolio Proyek - Vendor Visual"
+                description="Jelajahi galeri acara kami yang telah sukses didukung oleh keahlian teknis dan inventaris premium kami."
+            />
             <section className="relative min-h-[400px] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-background-dark/90 via-background-dark/70 to-background-dark z-10"></div>

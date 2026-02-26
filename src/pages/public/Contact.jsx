@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
 import API_BASE_URL from '../../config/api';
+import SEO from '../../components/SEO';
 
 
 // Memoized Map Component to prevent re-renders on form input
@@ -153,6 +154,10 @@ const Contact = () => {
 
     return (
         <>
+            <SEO
+                title="Hubungi Kami - Konsultasi & Pemesanan"
+                description="Hubungi tim ahli kami untuk mendiskusikan kebutuhan sewa alat visual acara Anda. Dapatkan penawaran harga terbaik dan konsultasi teknis gratis."
+            />
             <section className="relative min-h-[400px] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-background-dark/80 via-background-dark/70 to-background-dark z-10"></div>

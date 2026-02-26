@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getImageUrl } from '../../utils/imageUtils';
 import API_BASE_URL from '../../config/api';
+import SEO from '../../components/SEO';
 
 const ProjectDetail = () => {
     const { id } = useParams();
@@ -52,6 +53,11 @@ const ProjectDetail = () => {
 
     return (
         <React.Fragment>
+            <SEO
+                title={`Proyek: ${project.title}`}
+                description={`${project.description?.substring(0, 150) || `Portofolio proyek acara ${project.title} oleh Vendor Visual.`}`}
+                image={getImageUrl(project.coverImage || project.image)}
+            />
             {/* Added top padding to account for fixed navbar */}
             <main className="flex-grow pt-28 pb-20 bg-background-dark min-h-screen">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

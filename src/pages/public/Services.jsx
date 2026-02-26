@@ -6,6 +6,7 @@ import useSettings from '../../hooks/useSettings';
 import { useCart } from '../../contexts/CartContext';
 import { toast } from 'react-hot-toast';
 import API_BASE_URL from '../../config/api';
+import SEO from '../../components/SEO';
 
 const Services = () => {
     const { settings } = useSettings();
@@ -60,6 +61,10 @@ const Services = () => {
 
     return (
         <>
+            <SEO
+                title="Katalog Rental Visual Lengkap"
+                description="Telusuri inventaris lengkap peralatan event support kami, mulai dari TV LED berbagai ukuran, Videotron indoor/outdoor, hingga proyektor resolusi tinggi."
+            />
             <section className="relative min-h-[400px] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-background-dark/90 via-background-dark/70 to-background-dark z-10"></div>

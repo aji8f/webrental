@@ -5,6 +5,7 @@ import { getImageUrl } from '../../utils/imageUtils';
 import { useCart } from '../../contexts/CartContext';
 import { toast } from 'react-hot-toast';
 import API_BASE_URL from '../../config/api';
+import SEO from '../../components/SEO';
 
 const ServiceDetail = () => {
     const { id } = useParams();
@@ -79,6 +80,11 @@ const ServiceDetail = () => {
 
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-white pb-20">
+            <SEO
+                title={`${service.name} - Sewa Alat`}
+                description={`Sewa ${service.name} berkualitas dari Vendor Visual. ${service.description?.substring(0, 100) || ''}...`}
+                image={getImageUrl(service.image)}
+            />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
                 {/* Breadcrumb */}
                 <nav className="flex mb-8 text-sm text-gray-400">

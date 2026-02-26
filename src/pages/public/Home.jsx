@@ -4,6 +4,7 @@ import axios from 'axios';
 import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
 import API_BASE_URL from '../../config/api';
+import SEO from '../../components/SEO';
 
 const Home = () => {
     const { settings } = useSettings();
@@ -46,6 +47,10 @@ const Home = () => {
 
     return (
         <>
+            <SEO
+                title="Sewa LED Screen & Smart TV"
+                description="Hadirkan visual memukau di setiap momen dengan sewa LED Videotron, Smart TV, dan Proyektor terbaik di Jakarta. Konsultasi gratis untuk event Anda."
+            />
             <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-background-dark/80 via-background-dark/50 to-background-dark z-10"></div>
