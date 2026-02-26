@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import AdminLogin from './components/AdminLogin';
 import ProtectedRoute from './components/ProtectedRoute';
+import DynamicHead from './components/DynamicHead';
 import DashboardLayout from './layouts/DashboardLayout';
 import PublicLayout from './layouts/PublicLayout';
 import Dashboard from './pages/Dashboard';
@@ -59,6 +60,7 @@ axios.interceptors.response.use(
 function App() {
     return (
         <CartProvider>
+            <DynamicHead />
             <BrowserRouter>
                 <Toaster
                     position="top-right"
