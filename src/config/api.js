@@ -1,8 +1,8 @@
 // Centralized API configuration
-// In production (VPS), the frontend is served by the same Express server,
-// so API calls use relative paths (e.g., "/categories").
-// In development, Vite's proxy forwards /api requests to localhost:3001.
+// All API endpoints are prefixed with /api to avoid conflicts with SPA routes.
+// In production, Express serves API at /api/* and SPA fallback for everything else.
+// In development, Vite proxies /api/* to localhost:3001.
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export default API_BASE_URL;

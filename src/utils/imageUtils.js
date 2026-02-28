@@ -1,5 +1,3 @@
-import API_BASE_URL from '../config/api';
-
 export const getImageUrl = (path) => {
     if (!path) return '';
 
@@ -13,6 +11,6 @@ export const getImageUrl = (path) => {
         return path;
     }
 
-    // If it's a local path (starts with /uploads), append the backend URL
-    return `${API_BASE_URL}${path}`;
+    // Local paths (e.g. /uploads/image.png) are served as static files from root
+    return path;
 };
