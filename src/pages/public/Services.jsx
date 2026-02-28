@@ -17,6 +17,10 @@ const Services = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('Semua Peralatan');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [priceMin, setPriceMin] = useState('');
+    const [priceMax, setPriceMax] = useState('');
+    const [sortOption, setSortOption] = useState('popular');
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
@@ -27,7 +31,7 @@ const Services = () => {
     // Reset page when category changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedCategory]);
+    }, [selectedCategory, searchQuery, priceMin, priceMax, sortOption]);
 
     const fetchServices = async () => {
         try {
@@ -49,10 +53,38 @@ const Services = () => {
         }
     };
 
-    const filteredServices = selectedCategory === 'Semua Peralatan'
+    // Filter by category
+    let filtered = selectedCategory === 'Semua Peralatan'
         ? services
         : services.filter(service => service.category === selectedCategory);
 
+    // Filter by search query
+    if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        filtered = filtered.filter(s =>
+            s.name?.toLowerCase().includes(q) ||
+            s.description?.toLowerCase().includes(q)
+        );
+    }
+
+    // Filter by price range
+    if (priceMin !== '') {
+        filtered = filtered.filter(s => parseInt(s.price_daily) >= parseInt(priceMin));
+    }
+    if (priceMax !== '') {
+        filtered = filtered.filter(s => parseInt(s.price_daily) <= parseInt(priceMax));
+    }
+
+    // Sort
+    if (sortOption === 'price_asc') {
+        filtered = [...filtered].sort((a, b) => (a.price_daily || 0) - (b.price_daily || 0));
+    } else if (sortOption === 'price_desc') {
+        filtered = [...filtered].sort((a, b) => (b.price_daily || 0) - (a.price_daily || 0));
+    } else if (sortOption === 'newest') {
+        filtered = [...filtered].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
+
+    const filteredServices = filtered;
     const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -103,11 +135,26 @@ const Services = () => {
                         <div className="sticky top-24 bg-surface-dark rounded-xl border border-border-dark p-5">
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="font-bold text-white text-lg">Filter</h3>
-                                <button className="text-xs text-primary hover:text-primary-hover font-medium">Atur Ulang</button>
+                                <button
+                                    className="text-xs text-primary hover:text-primary-hover font-medium"
+                                    onClick={() => {
+                                        setSelectedCategory('Semua Peralatan');
+                                        setSearchQuery('');
+                                        setPriceMin('');
+                                        setPriceMax('');
+                                        setSortOption('popular');
+                                    }}
+                                >Atur Ulang</button>
                             </div>
                             <div className="mb-6">
                                 <div className="relative">
-                                    <input className="w-full bg-background-dark border border-border-dark text-white text-sm rounded-lg pl-9 pr-3 py-2.5 focus:border-primary focus:ring-1 focus:ring-primary placeholder-gray-500 outline-none transition-colors" placeholder="Cari item..." type="text" />
+                                    <input
+                                        className="w-full bg-background-dark border border-border-dark text-white text-sm rounded-lg pl-9 pr-3 py-2.5 focus:border-primary focus:ring-1 focus:ring-primary placeholder-gray-500 outline-none transition-colors"
+                                        placeholder="Cari item..."
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
                                     <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-gray-500 text-[18px]">search</span>
                                 </div>
                             </div>
@@ -141,16 +188,31 @@ const Services = () => {
                                 <div className="flex items-center gap-2 mb-4">
                                     <div className="relative w-full">
                                         <span className="absolute left-2 top-2 text-gray-500 text-xs">Rp</span>
-                                        <input className="w-full bg-background-dark border border-border-dark text-white text-xs rounded-md pl-6 py-2 focus:border-primary focus:ring-0 outline-none" placeholder="Min" type="number" />
+                                        <input
+                                            className="w-full bg-background-dark border border-border-dark text-white text-xs rounded-md pl-6 py-2 focus:border-primary focus:ring-0 outline-none"
+                                            placeholder="Min"
+                                            type="number"
+                                            value={priceMin}
+                                            onChange={(e) => setPriceMin(e.target.value)}
+                                        />
                                     </div>
                                     <span className="text-gray-500">-</span>
                                     <div className="relative w-full">
                                         <span className="absolute left-2 top-2 text-gray-500 text-xs">Rp</span>
-                                        <input className="w-full bg-background-dark border border-border-dark text-white text-xs rounded-md pl-6 py-2 focus:border-primary focus:ring-0 outline-none" placeholder="Maks" type="number" />
+                                        <input
+                                            className="w-full bg-background-dark border border-border-dark text-white text-xs rounded-md pl-6 py-2 focus:border-primary focus:ring-0 outline-none"
+                                            placeholder="Maks"
+                                            type="number"
+                                            value={priceMax}
+                                            onChange={(e) => setPriceMax(e.target.value)}
+                                        />
                                     </div>
                                 </div>
-                                <button className="w-full bg-surface-dark border border-border-dark hover:border-primary text-gray-300 hover:text-white text-xs font-semibold py-2 rounded-lg transition-colors">
-                                    Terapkan Filter
+                                <button
+                                    className="w-full bg-surface-dark border border-border-dark hover:border-primary text-gray-300 hover:text-white text-xs font-semibold py-2 rounded-lg transition-colors"
+                                    onClick={() => { setPriceMin(''); setPriceMax(''); }}
+                                >
+                                    Reset Harga
                                 </button>
                             </div>
                         </div>
@@ -162,11 +224,15 @@ const Services = () => {
                             </p>
                             <div className="flex items-center gap-3">
                                 <label className="text-sm text-gray-400 whitespace-nowrap">Urutkan berdasarkan:</label>
-                                <select className="bg-surface-dark border border-border-dark text-white text-sm rounded-lg px-3 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
-                                    <option>Paling Populer</option>
-                                    <option>Harga: Rendah ke Tinggi</option>
-                                    <option>Harga: Tinggi ke Rendah</option>
-                                    <option>Terbaru</option>
+                                <select
+                                    className="bg-surface-dark border border-border-dark text-white text-sm rounded-lg px-3 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer"
+                                    value={sortOption}
+                                    onChange={(e) => setSortOption(e.target.value)}
+                                >
+                                    <option value="popular">Paling Populer</option>
+                                    <option value="price_asc">Harga: Rendah ke Tinggi</option>
+                                    <option value="price_desc">Harga: Tinggi ke Rendah</option>
+                                    <option value="newest">Terbaru</option>
                                 </select>
                             </div>
                         </div>
@@ -225,8 +291,8 @@ const Services = () => {
                                                 key={page}
                                                 onClick={() => setCurrentPage(page)}
                                                 className={`w-10 h-10 rounded-lg font-medium text-sm flex items-center justify-center transition-colors ${currentPage === page
-                                                        ? 'bg-primary text-white'
-                                                        : 'bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary'
+                                                    ? 'bg-primary text-white'
+                                                    : 'bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary'
                                                     }`}
                                             >
                                                 {page}
