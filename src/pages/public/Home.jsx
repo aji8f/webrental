@@ -83,7 +83,7 @@ const Home = () => {
                                 Lihat Katalog Alat
                                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
                             </Link>
-                            <a href={`https://wa.me/${settings?.contact?.phone || '6281234567890'}`} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 text-white text-base font-bold h-12 px-8 rounded-lg transition-all duration-200">
+                            <a href={`https://wa.me/${settings?.contact?.phone?.replace(/\+/g, '').replace(/\s/g, '') || ''}`} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 text-white text-base font-bold h-12 px-8 rounded-lg transition-all duration-200">
                                 Konsultasi Gratis
                             </a>
                         </div>

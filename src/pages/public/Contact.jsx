@@ -310,8 +310,12 @@ const Contact = () => {
                                             rel="noopener noreferrer"
                                             className="text-gray-400 text-sm leading-relaxed hover:text-white transition-colors block"
                                         >
-                                            {settings?.contact?.headquarters?.street || '123 Event Horizon Blvd, Suite 400'}<br />
-                                            {settings?.contact?.headquarters?.city || 'Los Angeles'}, {settings?.contact?.headquarters?.zip || 'CA 90012'}
+                                            {settings?.contact?.headquarters?.street && (
+                                                <>
+                                                    {settings.contact.headquarters.street}<br />
+                                                    {settings.contact.headquarters.city}{settings?.contact?.headquarters?.zip ? `, ${settings.contact.headquarters.zip}` : ''}
+                                                </>
+                                            )}
                                         </a>
                                     </div>
                                 </li>
@@ -322,12 +326,12 @@ const Contact = () => {
                                     <div>
                                         <p className="text-white font-medium mb-1">Telepon (WhatsApp)</p>
                                         <a
-                                            href={`https://wa.me/${settings?.contact?.phone?.replace(/\+/g, '').replace(/\s/g, '') || '628123456789'}`}
+                                            href={`https://wa.me/${settings?.contact?.phone?.replace(/\+/g, '').replace(/\s/g, '') || ''}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-gray-400 text-sm hover:text-white transition-colors"
                                         >
-                                            {settings?.contact?.phone || '+62 812 345 6789'}
+                                            {settings?.contact?.phone || ''}
                                         </a>
                                     </div>
                                 </li>
@@ -346,8 +350,8 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <p className="text-white font-medium mb-1">Jam Kantor</p>
-                                        <p className="text-gray-400 text-sm">{settings?.contact?.businessHours?.weekday || 'Sen-Jum: 9.00 - 18.00 WIB'}</p>
-                                        <p className="text-gray-400 text-sm">{settings?.contact?.businessHours?.emergency || 'Dukungan Darurat 24/7'}</p>
+                                        <p className="text-gray-400 text-sm">{settings?.contact?.businessHours?.weekday || ''}</p>
+                                        <p className="text-gray-400 text-sm">{settings?.contact?.businessHours?.emergency || ''}</p>
                                     </div>
                                 </li>
                             </ul>
