@@ -1,78 +1,67 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import API_BASE_URL from '../config/api';
 
 const SETTINGS_CACHE_KEY = 'webrental_settings_cache';
 
-/**
- * Reads cached settings from localStorage for instant hydration.
- * This eliminates the flash-of-default-content on page refresh.
- */
 const getCachedSettings = () => {
     try {
         const cached = localStorage.getItem(SETTINGS_CACHE_KEY);
-        if (cached) {
-            return JSON.parse(cached);
-        }
+        if (cached) return JSON.parse(cached);
     } catch (e) {
-        // Corrupted cache — ignore
         localStorage.removeItem(SETTINGS_CACHE_KEY);
     }
     return null;
 };
 
-/**
- * Saves settings to localStorage for next page load.
- */
 const setCachedSettings = (settings) => {
     try {
         if (settings && Object.keys(settings).length > 0) {
             localStorage.setItem(SETTINGS_CACHE_KEY, JSON.stringify(settings));
         }
-    } catch (e) {
-        // localStorage full or unavailable — ignore silently
-    }
+    } catch (e) { /* ignore */ }
 };
 
-const useSettings = () => {
-    // Initialize from cache for instant rendering — no flash!
+const SettingsContext = createContext(null);
+
+export const SettingsProvider = ({ children }) => {
     const [settings, setSettings] = useState(() => getCachedSettings());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [ready, setReady] = useState(() => !!getCachedSettings());
 
     const fetchSettings = useCallback(async () => {
         try {
             setLoading(true);
             const response = await axios.get(`${API_BASE_URL}/settings`);
-            const freshSettings = response.data;
-            setSettings(freshSettings);
-            setCachedSettings(freshSettings); // Update cache for next refresh
+            const fresh = response.data;
+            setSettings(fresh);
+            setCachedSettings(fresh);
             setError(null);
+            setReady(true);
         } catch (err) {
             console.error('Error fetching settings:', err);
             setError('Failed to load settings');
-            // Only show toast if we don't have cached data to fall back on
             if (!getCachedSettings()) {
                 toast.error('Failed to load settings');
             }
+            setReady(true);
         } finally {
             setLoading(false);
         }
     }, []);
 
     const updateSettings = async (newSettings) => {
+        const previousSettings = settings;
         try {
-            const previousSettings = settings;
             setSettings(newSettings);
-            setCachedSettings(newSettings); // Update cache immediately
-
+            setCachedSettings(newSettings);
             await axios.put(`${API_BASE_URL}/settings`, newSettings);
             toast.success('Settings saved successfully');
             return true;
         } catch (err) {
             console.error('Error updating settings:', err);
-            // Revert on error
             setSettings(previousSettings);
             setCachedSettings(previousSettings);
             toast.error('Failed to save settings');
@@ -84,13 +73,25 @@ const useSettings = () => {
         fetchSettings();
     }, [fetchSettings]);
 
-    return {
-        settings,
-        loading,
-        error,
-        updateSettings,
-        refetch: fetchSettings
-    };
+    // Block rendering until settings are ready (from cache or API)
+    if (!ready) {
+        return React.createElement('div', {
+            className: 'bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center'
+        }, React.createElement('div', {
+            className: 'animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary'
+        }));
+    }
+
+    return React.createElement(SettingsContext.Provider, { value: { settings, loading, error, updateSettings, refetch: fetchSettings } }, children);
+};
+
+// Hook to consume settings
+const useSettings = () => {
+    const context = useContext(SettingsContext);
+    if (!context) {
+        throw new Error('useSettings must be used within a SettingsProvider');
+    }
+    return context;
 };
 
 export default useSettings;

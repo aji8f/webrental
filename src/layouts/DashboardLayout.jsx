@@ -11,16 +11,6 @@ const DashboardLayout = () => {
     const navigate = useNavigate();
     const { settings, loading, updateSettings } = useSettings();
 
-    // Show loading gate until settings load (from cache or API)
-    // This prevents any flash of default content
-    if (!settings && loading) {
-        return (
-            <div className="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-            </div>
-        );
-    }
-
     const handleLogout = () => {
         localStorage.removeItem('adminToken');
         navigate('/admin');

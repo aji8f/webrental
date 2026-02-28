@@ -16,16 +16,6 @@ const PublicLayout = () => {
         setMobileMenuOpen(false);
     }, [location.pathname]);
 
-    // Show a minimal loading screen until settings are available
-    // This prevents any flash of default/dummy content
-    if (!settings && loading) {
-        return (
-            <div className="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-            </div>
-        );
-    }
-
     return (
         <div className="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-white antialiased flex flex-col font-display">
             <nav className="fixed top-0 w-full z-50 glass-header border-b border-border-dark transition-all duration-300 bg-[#101622]/85 backdrop-blur-md">

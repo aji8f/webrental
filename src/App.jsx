@@ -4,6 +4,7 @@ import axios from 'axios';
 import AdminLogin from './components/AdminLogin';
 import ProtectedRoute from './components/ProtectedRoute';
 import DynamicHead from './components/DynamicHead';
+import { SettingsProvider } from './hooks/useSettings';
 import DashboardLayout from './layouts/DashboardLayout';
 import PublicLayout from './layouts/PublicLayout';
 import Dashboard from './pages/Dashboard';
@@ -61,52 +62,54 @@ axios.interceptors.response.use(
 function App() {
     return (
         <HelmetProvider>
-            <CartProvider>
-                <DynamicHead />
-                <BrowserRouter>
-                    <Toaster
-                        position="top-right"
-                        toastOptions={{
-                            className: 'font-display',
-                        }}
-                    />
-                    <Routes>
-                        {/* Public Routes */}
-                        <Route path="/" element={<PublicLayout />}>
-                            <Route index element={<Home />} />
-                            <Route path="services" element={<PublicServices />} />
-                            <Route path="services/:id" element={<ServiceDetail />} />
-                            <Route path="portfolio" element={<Portfolio />} />
-                            <Route path="portfolio/:id" element={<ProjectDetail />} />
-                            <Route path="about" element={<About />} />
-                            <Route path="contact" element={<Contact />} />
-                            <Route path="cart" element={<Cart />} />
-                        </Route>
+            <SettingsProvider>
+                <CartProvider>
+                    <DynamicHead />
+                    <BrowserRouter>
+                        <Toaster
+                            position="top-right"
+                            toastOptions={{
+                                className: 'font-display',
+                            }}
+                        />
+                        <Routes>
+                            {/* Public Routes */}
+                            <Route path="/" element={<PublicLayout />}>
+                                <Route index element={<Home />} />
+                                <Route path="services" element={<PublicServices />} />
+                                <Route path="services/:id" element={<ServiceDetail />} />
+                                <Route path="portfolio" element={<Portfolio />} />
+                                <Route path="portfolio/:id" element={<ProjectDetail />} />
+                                <Route path="about" element={<About />} />
+                                <Route path="contact" element={<Contact />} />
+                                <Route path="cart" element={<Cart />} />
+                            </Route>
 
-                        {/* Admin Routes */}
-                        <Route path="/admin" element={<AdminLogin />} />
+                            {/* Admin Routes */}
+                            <Route path="/admin" element={<AdminLogin />} />
 
-                        {/* Protected Dashboard Routes */}
-                        <Route path="/dashboard" element={
-                            <ProtectedRoute>
-                                <DashboardLayout />
-                            </ProtectedRoute>
-                        }>
-                            <Route index element={<Dashboard />} />
-                            <Route path="services" element={<Services />} />
-                            <Route path="services/new" element={<ServiceForm />} />
-                            <Route path="services/:id/edit" element={<ServiceForm />} />
-                            <Route path="categories" element={<Categories />} />
-                            <Route path="portfolio" element={<AdminPortfolio />} />
-                            <Route path="portfolio/new" element={<ProjectAdd />} />
-                            <Route path="portfolio/:id/edit" element={<ProjectEdit />} />
-                            <Route path="leads" element={<Leads />} />
-                            <Route path="about" element={<AboutSettings />} />
-                            <Route path="settings" element={<Settings />} />
-                        </Route>
-                    </Routes>
-                </BrowserRouter>
-            </CartProvider>
+                            {/* Protected Dashboard Routes */}
+                            <Route path="/dashboard" element={
+                                <ProtectedRoute>
+                                    <DashboardLayout />
+                                </ProtectedRoute>
+                            }>
+                                <Route index element={<Dashboard />} />
+                                <Route path="services" element={<Services />} />
+                                <Route path="services/new" element={<ServiceForm />} />
+                                <Route path="services/:id/edit" element={<ServiceForm />} />
+                                <Route path="categories" element={<Categories />} />
+                                <Route path="portfolio" element={<AdminPortfolio />} />
+                                <Route path="portfolio/new" element={<ProjectAdd />} />
+                                <Route path="portfolio/:id/edit" element={<ProjectEdit />} />
+                                <Route path="leads" element={<Leads />} />
+                                <Route path="about" element={<AboutSettings />} />
+                                <Route path="settings" element={<Settings />} />
+                            </Route>
+                        </Routes>
+                    </BrowserRouter>
+                </CartProvider>
+            </SettingsProvider>
         </HelmetProvider>
     );
 }
