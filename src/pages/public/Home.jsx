@@ -96,7 +96,7 @@ const Home = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-dark border border-border-dark text-xs font-medium text-primary w-fit">
-                            {aboutData?.homeSummary?.tagline || 'Tentang EventGuard.av'}
+                            {aboutData?.homeSummary?.tagline || 'Tentang Kami'}
                         </div>
                         <h2 className="text-3xl md:text-4xl font-bold text-white font-serif">
                             {aboutData?.homeSummary?.title || 'Solusi Visual Terintegrasi untuk Event Anda'}

@@ -337,7 +337,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <p className="text-white font-medium mb-1">Email</p>
-                                        <a href={`mailto:${settings?.contact?.email?.sales}`} className="text-gray-400 text-sm hover:text-white transition-colors">{settings?.contact?.email?.sales || 'hello@eventguard.com'}</a>
+                                        <a href={`mailto:${settings?.contact?.email?.sales}`} className="text-gray-400 text-sm hover:text-white transition-colors">{settings?.contact?.email?.sales || ''}</a>
                                     </div>
                                 </li>
                                 <li className="flex items-start gap-4">

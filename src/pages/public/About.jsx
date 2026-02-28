@@ -73,7 +73,7 @@ const About = () => {
                         <h2 className="text-3xl md:text-4xl font-bold text-white font-serif">Dari Layanan Lokal ke Standar Visual Nasional</h2>
                         <div className="space-y-4 text-gray-400 leading-relaxed whitespace-pre-line">
                             <p>
-                                {aboutData?.pageContent?.history || 'Didirikan pada tahun 2012, EventGuard.av memulai dengan misi sederhana: menyediakan perangkat visual berkualitas tinggi untuk acara lokal. Kami melihat celah di pasar untuk penyedia yang tidak hanya menyewakan alat, tetapi memberikan solusi visual end-to-end.'}
+                                {aboutData?.pageContent?.history || ''}
                             </p>
                         </div>
                     </div>
@@ -197,7 +197,7 @@ const About = () => {
                     <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }}>
                     </div>
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-serif relative z-10">Siap bekerja dengan yang terbaik?</h2>
-                    <p className="text-blue-100 text-lg max-w-2xl mx-auto mb-8 relative z-10">Bergabunglah dengan ratusan penyelenggara acara yang mempercayai EventGuard untuk kebutuhan visual dan peralatan mereka.</p>
+                    <p className="text-blue-100 text-lg max-w-2xl mx-auto mb-8 relative z-10">Bergabunglah dengan ratusan penyelenggara acara yang mempercayai kami untuk kebutuhan visual dan peralatan mereka.</p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
                         <Link to="/services" className="bg-white text-primary font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors shadow-lg align-middle inline-flex items-center justify-center">
                             Lihat Layanan Kami

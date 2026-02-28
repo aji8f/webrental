@@ -9,7 +9,17 @@ const DashboardLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const { settings, updateSettings } = useSettings();
+    const { settings, loading, updateSettings } = useSettings();
+
+    // Show loading gate until settings load (from cache or API)
+    // This prevents any flash of default content
+    if (!settings && loading) {
+        return (
+            <div className="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('adminToken');
@@ -17,7 +27,7 @@ const DashboardLayout = () => {
     };
 
     const handleEditName = async () => {
-        const currentName = settings?.profile?.name || 'Marcus Reed';
+        const currentName = settings?.profile?.name || '';
         const newName = window.prompt('Enter new admin name:', currentName);
 
         if (newName && newName.trim() !== '' && newName !== currentName) {
@@ -57,7 +67,7 @@ const DashboardLayout = () => {
                     ) : (
                         <div className="flex items-center gap-2 text-primary">
                             <span className="material-symbols-outlined text-3xl">shield_lock</span>
-                            <span className="text-white text-lg font-bold tracking-tight">SecureRent<span className="text-primary">.admin</span></span>
+                            <span className="text-white text-lg font-bold tracking-tight">{settings?.contact?.name || ''}</span>
                         </div>
                     )}
                 </div>
@@ -66,7 +76,7 @@ const DashboardLayout = () => {
                         <div className="bg-center bg-no-repeat bg-cover rounded-full h-10 w-10 shrink-0" data-alt="Profile picture of a male admin user" style={{ backgroundImage: `url("${settings?.profile?.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDE14Zsz1GwixLuJvClY9GCboxkC_YZbT15kIraqsDmS8zXnff8KVgCiep6UGZ2cKfTXDz1fGj81gkb5Qpf4vW13tB-PgiJ-suA8YS590nBJ_HSuaYQx8XwthUE9zseItNKAOQvm-fxKDhLoITKyUWWFz7xA7Q_KDeh89TVfOnhODXtaRcGlgjPYysIxtfhcFZZ4xeHlkGEXi3TGN_57ZmsVCd8GIy9tf_nTHlC1pf3Rda3ZCiX6Zc2zprLq_S0rUBUuHsPS4tR0ZU'}")` }}></div>
                         <div className="flex flex-col overflow-hidden flex-1">
                             <div className="flex items-center gap-1">
-                                <h1 className="text-white text-sm font-medium leading-none truncate">{settings?.profile?.name || 'Marcus Reed'}</h1>
+                                <h1 className="text-white text-sm font-medium leading-none truncate">{settings?.profile?.name || ''}</h1>
                                 <button
                                     onClick={handleEditName}
                                     className="text-gray-500 hover:text-white transition-colors p-0.5 rounded hover:bg-white/10"
@@ -75,7 +85,7 @@ const DashboardLayout = () => {
                                     <span className="material-symbols-outlined text-[14px]">edit</span>
                                 </button>
                             </div>
-                            <p className="text-[#92a4c9] text-xs font-normal mt-1 truncate">{settings?.profile?.role || 'Event Admin'}</p>
+                            <p className="text-[#92a4c9] text-xs font-normal mt-1 truncate">{settings?.profile?.role || ''}</p>
                         </div>
                     </div>
                 </div>
