@@ -4,6 +4,7 @@ import useSettings from '../hooks/useSettings';
 import { getImageUrl } from '../utils/imageUtils';
 import { useCart } from '../contexts/CartContext';
 import FloatingWhatsApp from '../components/FloatingWhatsApp';
+import { trackContactClick } from '../utils/trackClick';
 
 const PublicLayout = () => {
     const { settings, loading } = useSettings();
@@ -143,6 +144,7 @@ const PublicLayout = () => {
                                             href={`https://wa.me/${settings.contact.phone.replace(/\+/g, '').replace(/\s/g, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            onClick={() => trackContactClick('whatsapp', 'footer')}
                                             className="hover:text-white transition-colors"
                                         >
                                             {settings.contact.phone}

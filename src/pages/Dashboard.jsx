@@ -8,7 +8,8 @@ const Dashboard = () => {
         quoteRequests: 0,
         generalInquiries: 0,
         totalServices: 0,
-        totalProjects: 0
+        totalProjects: 0,
+        contactClicks: { total: 0, today: 0, byType: {} }
     });
     const [recentLeads, setRecentLeads] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,10 +17,13 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [leadsRes, servicesRes, projectsRes] = await Promise.all([
+                const [leadsRes, servicesRes, projectsRes, clickStatsRes] = await Promise.all([
                     axios.get(`${API_BASE_URL}/leads?_sort=createdAt&_order=desc`),
                     axios.get(`${API_BASE_URL}/services`),
-                    axios.get(`${API_BASE_URL}/projects`)
+                    axios.get(`${API_BASE_URL}/projects`),
+                    axios.get(`${API_BASE_URL}/contact-clicks/stats`, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+                    }).catch(() => ({ data: { total: 0, today: 0, byType: {} } }))
                 ]);
 
                 const leads = leadsRes.data;
@@ -34,7 +38,8 @@ const Dashboard = () => {
                     quoteRequests,
                     generalInquiries,
                     totalServices: services.length,
-                    totalProjects: projects.length
+                    totalProjects: projects.length,
+                    contactClicks: clickStatsRes?.data || { total: 0, today: 0, byType: {} }
                 });
 
                 // Get latest 5 leads for Recent Activity
@@ -138,6 +143,27 @@ const Dashboard = () => {
                             <div className="flex items-end gap-2">
                                 <h3 className="text-white text-3xl font-bold">{stats.totalProjects}</h3>
                                 <span className="text-xs text-[#92a4c9] mb-1">Proyek Ditampilkan</span>
+                            </div>
+                        </div>
+
+                        {/* Contact Clicks */}
+                        <div className="bg-[#111722] rounded-xl border border-[#324467] p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
+                            <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <span className="material-symbols-outlined text-6xl text-orange-400">touch_app</span>
+                            </div>
+                            <div className="flex justify-between items-start">
+                                <p className="text-[#92a4c9] text-sm font-medium">Klik Kontak</p>
+                                {stats.contactClicks.today > 0 && (
+                                    <span className="text-xs bg-orange-500/10 text-orange-400 px-2 py-0.5 rounded-full">+{stats.contactClicks.today} hari ini</span>
+                                )}
+                            </div>
+                            <div className="flex items-end gap-2">
+                                <h3 className="text-white text-3xl font-bold">{stats.contactClicks.total}</h3>
+                                <div className="flex gap-2 mb-1">
+                                    {stats.contactClicks.byType?.whatsapp > 0 && <span className="text-xs text-green-400">WA: {stats.contactClicks.byType.whatsapp}</span>}
+                                    {stats.contactClicks.byType?.email > 0 && <span className="text-xs text-blue-400">Email: {stats.contactClicks.byType.email}</span>}
+                                    {stats.contactClicks.byType?.phone > 0 && <span className="text-xs text-purple-400">Tel: {stats.contactClicks.byType.phone}</span>}
+                                </div>
                             </div>
                         </div>
                     </div>

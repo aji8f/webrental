@@ -5,6 +5,7 @@ import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
 import API_BASE_URL from '../../config/api';
 import SEO from '../../components/SEO';
+import { trackContactClick } from '../../utils/trackClick';
 
 const Home = () => {
     const { settings } = useSettings();
@@ -83,7 +84,7 @@ const Home = () => {
                                 Lihat Katalog Alat
                                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
                             </Link>
-                            <a href={`https://wa.me/${settings?.contact?.phone?.replace(/\+/g, '').replace(/\s/g, '') || ''}`} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 text-white text-base font-bold h-12 px-8 rounded-lg transition-all duration-200">
+                            <a href={`https://wa.me/${settings?.contact?.phone?.replace(/\+/g, '').replace(/\s/g, '') || ''}`} target="_blank" rel="noreferrer" onClick={() => trackContactClick('whatsapp', 'home')} className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 text-white text-base font-bold h-12 px-8 rounded-lg transition-all duration-200">
                                 Konsultasi Gratis
                             </a>
                         </div>
@@ -127,17 +128,25 @@ const Home = () => {
                 </div>
             </section>
 
-            <section className="border-y border-border-dark bg-surface-dark/50">
-                <div className="max-w-7xl mx-auto px-4 py-8">
-                    <p className="text-center text-sm font-medium text-gray-500 mb-6 uppercase tracking-wider">Dipercaya oleh penyelenggara acara terkemuka</p>
-                    <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                        <div className="flex items-center gap-2 text-white font-bold text-xl"><span className="material-symbols-outlined">diamond</span> GRAND WEDDINGS</div>
-                        <div className="flex items-center gap-2 text-white font-bold text-xl"><span className="material-symbols-outlined">corporate_fare</span> CORP ELITE</div>
-                        <div className="flex items-center gap-2 text-white font-bold text-xl"><span className="material-symbols-outlined">music_note</span> JAVA JAZZ</div>
-                        <div className="flex items-center gap-2 text-white font-bold text-xl"><span className="material-symbols-outlined">apartment</span> EXPO INDO</div>
+            {settings?.clientLogos && settings.clientLogos.length > 0 && (
+                <section className="border-y border-border-dark bg-surface-dark/50">
+                    <div className="max-w-7xl mx-auto px-4 py-8">
+                        <p className="text-center text-sm font-medium text-gray-500 mb-6 uppercase tracking-wider">Dipercaya oleh penyelenggara acara terkemuka</p>
+                        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                            {settings.clientLogos.map((logo, index) => (
+                                <div key={index} className="flex items-center justify-center h-12">
+                                    <img
+                                        src={getImageUrl(logo.image)}
+                                        alt={logo.name}
+                                        className="max-h-12 max-w-[160px] object-contain"
+                                        title={logo.name}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
@@ -151,8 +160,8 @@ const Home = () => {
                     </Link>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {categories.length > 0 ? (
-                        categories.map((category) => (
+                    {categories.filter(c => c.image).slice(0, 4).length > 0 ? (
+                        categories.filter(c => c.image).slice(0, 4).map((category) => (
                             <div key={category.id} className="group relative bg-surface-dark rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
                                 <div className="aspect-video w-full overflow-hidden">
                                     <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt={category.name} style={{ backgroundImage: `url('${category.image}')` }}></div>

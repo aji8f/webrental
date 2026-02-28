@@ -27,8 +27,14 @@ const settingSchema = new mongoose.Schema({
         contact: String
     },
     logo: String,
+    clientLogos: [{
+        name: String,
+        image: String
+    }],
     profile: {
-        name: String
+        name: String,
+        role: String,
+        avatar: String
     }
 }, { timestamps: true });
 

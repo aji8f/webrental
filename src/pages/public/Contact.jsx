@@ -5,6 +5,7 @@ import useSettings from '../../hooks/useSettings';
 import { getImageUrl } from '../../utils/imageUtils';
 import API_BASE_URL from '../../config/api';
 import SEO from '../../components/SEO';
+import { trackContactClick } from '../../utils/trackClick';
 
 
 // Memoized Map Component to prevent re-renders on form input
@@ -329,6 +330,7 @@ const Contact = () => {
                                             href={`https://wa.me/${settings?.contact?.phone?.replace(/\+/g, '').replace(/\s/g, '') || ''}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            onClick={() => trackContactClick('whatsapp', 'contact')}
                                             className="text-gray-400 text-sm hover:text-white transition-colors"
                                         >
                                             {settings?.contact?.phone || ''}

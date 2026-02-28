@@ -17,6 +17,7 @@ import Project from './models/Project.js';
 import Setting from './models/Setting.js';
 import Stat from './models/Stat.js';
 import About from './models/About.js';
+import ContactClick from './models/ContactClick.js';
 
 dotenv.config();
 
@@ -381,6 +382,48 @@ app.put('/api/about', authenticateToken, async (req, res) => {
         res.json(about);
     } catch (err) {
         res.status(400).json({ error: err.message });
+    }
+});
+
+// --- Contact Click Tracking ---
+const clickLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 30, // max 30 clicks per minute per IP
+    message: { error: 'Too many requests' }
+});
+
+app.post('/api/contact-clicks', clickLimiter, async (req, res) => {
+    try {
+        const { type, source } = req.body;
+        const validTypes = ['whatsapp', 'email', 'phone'];
+        const validSources = ['home', 'contact', 'footer', 'floating'];
+        if (!validTypes.includes(type) || !validSources.includes(source)) {
+            return res.status(400).json({ error: 'Invalid type or source' });
+        }
+        const click = new ContactClick({ type, source });
+        await click.save();
+        res.status(201).json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/contact-clicks/stats', authenticateToken, async (req, res) => {
+    try {
+        const total = await ContactClick.countDocuments();
+        const byType = await ContactClick.aggregate([
+            { $group: { _id: '$type', count: { $sum: 1 } } }
+        ]);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayCount = await ContactClick.countDocuments({ createdAt: { $gte: today } });
+        res.json({
+            total,
+            today: todayCount,
+            byType: byType.reduce((acc, item) => { acc[item._id] = item.count; return acc; }, {})
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
