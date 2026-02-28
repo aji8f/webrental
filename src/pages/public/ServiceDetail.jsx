@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getImageUrl } from '../../utils/imageUtils';
@@ -14,6 +14,8 @@ const ServiceDetail = () => {
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState('');
     const [quantity, setQuantity] = useState(1);
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [lightboxImage, setLightboxImage] = useState('');
 
     const { addToCart } = useCart();
 
@@ -21,6 +23,31 @@ const ServiceDetail = () => {
         fetchServiceData();
         window.scrollTo(0, 0);
     }, [id]);
+
+    // Close lightbox on Escape key
+    const handleKeyDown = useCallback((e) => {
+        if (e.key === 'Escape') {
+            setLightboxOpen(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (lightboxOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = '';
+        };
+    }, [lightboxOpen, handleKeyDown]);
+
+    const openLightbox = (imgSrc) => {
+        setLightboxImage(imgSrc);
+        setLightboxOpen(true);
+    };
 
     const fetchServiceData = async () => {
         try {
@@ -85,6 +112,28 @@ const ServiceDetail = () => {
                 description={`Sewa ${service.name} berkualitas dari Vendor Visual. ${service.description?.substring(0, 100) || ''}...`}
                 image={getImageUrl(service.image)}
             />
+
+            {/* Lightbox Modal */}
+            {lightboxOpen && (
+                <div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm cursor-pointer"
+                    onClick={() => setLightboxOpen(false)}
+                >
+                    <button
+                        onClick={(e) => { e.stopPropagation(); setLightboxOpen(false); }}
+                        className="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors bg-white/10 hover:bg-white/20 rounded-full p-2"
+                    >
+                        <span className="material-symbols-outlined text-3xl">close</span>
+                    </button>
+                    <img
+                        src={getImageUrl(lightboxImage)}
+                        alt={service.name}
+                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl cursor-default"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </div>
+            )}
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
                 {/* Breadcrumb */}
                 <nav className="flex mb-8 text-sm text-gray-400">
@@ -98,13 +147,21 @@ const ServiceDetail = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* Left Column: Images */}
                     <div className="lg:col-span-7 space-y-4">
-                        <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden bg-surface-dark border border-border-dark group relative">
+                        <div
+                            className="aspect-[16/9] w-full rounded-2xl overflow-hidden bg-surface-dark border border-border-dark group relative cursor-pointer"
+                            onClick={() => openLightbox(activeImage)}
+                        >
                             <img
                                 src={getImageUrl(activeImage)}
                                 alt={service.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+                            {/* Zoom hint */}
+                            <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white/80 rounded-lg px-3 py-1.5 flex items-center gap-1.5 text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                <span className="material-symbols-outlined text-sm">zoom_in</span>
+                                Klik untuk memperbesar
+                            </div>
                         </div>
 
                         {/* Gallery Thumbnails */}
@@ -143,7 +200,7 @@ const ServiceDetail = () => {
                                     Rp {service.price_daily?.toLocaleString('id-ID')}
                                 </span>
                             </div>
-                            <span className="text-gray-500 text-lg mb-0.5">/{service.unit || 'hari'}</span>
+                            <span className="text-gray-500 text-lg mb-0.5">/{(service.service_type || service.unit || 'hari').replace('per/', '')}</span>
                         </div>
 
                         <div className="prose prose-invert max-w-none text-gray-400 mb-8 leading-relaxed">

@@ -8,6 +8,8 @@ import { toast } from 'react-hot-toast';
 import API_BASE_URL from '../../config/api';
 import SEO from '../../components/SEO';
 
+const ITEMS_PER_PAGE = 15;
+
 const Services = () => {
     const { settings } = useSettings();
     const { addToCart } = useCart();
@@ -15,27 +17,19 @@ const Services = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('Semua Peralatan');
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         fetchServices();
         fetchCategories();
     }, []);
 
-    const fetchServices = async () => {
-        // ... (rest of fetch logic remains same)
+    // Reset page when category changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedCategory]);
 
-        // ... (inside map)
-        <button
-            className="size-8 rounded-full bg-white/5 hover:bg-primary text-white flex items-center justify-center transition-colors z-10 relative"
-            onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                addToCart(service);
-                // toast handled in context
-            }}
-        >
-            <span className="material-symbols-outlined text-lg">add</span>
-        </button>
+    const fetchServices = async () => {
         try {
             const response = await axios.get(`${API_BASE_URL}/services`);
             setServices(response.data);
@@ -58,6 +52,28 @@ const Services = () => {
     const filteredServices = selectedCategory === 'Semua Peralatan'
         ? services
         : services.filter(service => service.category === selectedCategory);
+
+    const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedServices = filteredServices.slice(startIndex, endIndex);
+
+    // Generate page numbers to display
+    const getPageNumbers = () => {
+        const pages = [];
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) pages.push(i);
+        } else {
+            pages.push(1);
+            if (currentPage > 3) pages.push('...');
+            const start = Math.max(2, currentPage - 1);
+            const end = Math.min(totalPages - 1, currentPage + 1);
+            for (let i = start; i <= end; i++) pages.push(i);
+            if (currentPage < totalPages - 2) pages.push('...');
+            pages.push(totalPages);
+        }
+        return pages;
+    };
 
     return (
         <>
@@ -141,7 +157,9 @@ const Services = () => {
                     </aside>
                     <div className="flex-grow">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                            <p className="text-sm text-gray-400">Menampilkan <span className="text-white font-semibold">{filteredServices.length}</span> hasil</p>
+                            <p className="text-sm text-gray-400">
+                                Menampilkan <span className="text-white font-semibold">{filteredServices.length > 0 ? `${startIndex + 1}-${Math.min(endIndex, filteredServices.length)}` : '0'}</span> dari <span className="text-white font-semibold">{filteredServices.length}</span> hasil
+                            </p>
                             <div className="flex items-center gap-3">
                                 <label className="text-sm text-gray-400 whitespace-nowrap">Urutkan berdasarkan:</label>
                                 <select className="bg-surface-dark border border-border-dark text-white text-sm rounded-lg px-3 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
@@ -158,7 +176,7 @@ const Services = () => {
                             <div className="text-gray-400 text-center py-20">Tidak ada layanan ditemukan dalam kategori ini.</div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredServices.map(service => (
+                                {paginatedServices.map(service => (
                                     <Link to={`/services/${service.id}`} key={service.id} className="group bg-surface-dark rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 flex flex-col h-full cursor-pointer">
                                         <div className="aspect-video w-full overflow-hidden relative">
                                             <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${service.image || 'https://via.placeholder.com/400x300?text=No+Image'}'` }}></div>
@@ -178,7 +196,7 @@ const Services = () => {
                                                         <span className="text-gray-500 text-xs block mb-0.5">Mulai dari</span>
                                                         <span className="text-white font-bold text-lg">
                                                             Rp {parseInt(service.price_daily).toLocaleString('id-ID')}
-                                                            <span className="text-xs font-normal text-gray-500">/{service.unit || 'hari'}</span>
+                                                            <span className="text-xs font-normal text-gray-500">/{service.service_type || service.unit || 'hari'}</span>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -188,21 +206,43 @@ const Services = () => {
                                 ))}
                             </div>
                         )}
-                        <div className="mt-12 flex justify-center">
-                            <nav className="flex items-center gap-2">
-                                <button className="p-2 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary transition-colors">
-                                    <span className="material-symbols-outlined text-sm">chevron_left</span>
-                                </button>
-                                <button className="w-10 h-10 rounded-lg bg-primary text-white font-medium text-sm flex items-center justify-center">1</button>
-                                <button className="w-10 h-10 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary transition-colors font-medium text-sm flex items-center justify-center">2</button>
-                                <button className="w-10 h-10 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary transition-colors font-medium text-sm flex items-center justify-center">3</button>
-                                <span className="text-gray-500 px-2">...</span>
-                                <button className="w-10 h-10 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary transition-colors font-medium text-sm flex items-center justify-center">5</button>
-                                <button className="p-2 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary transition-colors">
-                                    <span className="material-symbols-outlined text-sm">chevron_right</span>
-                                </button>
-                            </nav>
-                        </div>
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="mt-12 flex justify-center">
+                                <nav className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                        disabled={currentPage === 1}
+                                        className={`p-2 rounded-lg bg-surface-dark border border-border-dark transition-colors ${currentPage === 1 ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:border-primary'}`}
+                                    >
+                                        <span className="material-symbols-outlined text-sm">chevron_left</span>
+                                    </button>
+                                    {getPageNumbers().map((page, idx) =>
+                                        page === '...' ? (
+                                            <span key={`ellipsis-${idx}`} className="text-gray-500 px-2">...</span>
+                                        ) : (
+                                            <button
+                                                key={page}
+                                                onClick={() => setCurrentPage(page)}
+                                                className={`w-10 h-10 rounded-lg font-medium text-sm flex items-center justify-center transition-colors ${currentPage === page
+                                                        ? 'bg-primary text-white'
+                                                        : 'bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:border-primary'
+                                                    }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        )
+                                    )}
+                                    <button
+                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                        disabled={currentPage === totalPages}
+                                        className={`p-2 rounded-lg bg-surface-dark border border-border-dark transition-colors ${currentPage === totalPages ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:border-primary'}`}
+                                    >
+                                        <span className="material-symbols-outlined text-sm">chevron_right</span>
+                                    </button>
+                                </nav>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

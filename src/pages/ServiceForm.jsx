@@ -14,6 +14,7 @@ const ServiceForm = () => {
         category: '',
         inventory_count: 0,
         price_daily: 0,
+        service_type: 'per/hari',
         description: '',
         status: 'published',
         image: null
@@ -42,7 +43,6 @@ const ServiceForm = () => {
     const fetchServiceDetails = async () => {
         try {
             const response = await axios.get(`${API_BASE_URL}/services/${id}`);
-            // Map the API data to form data structure if needed
             setFormData(response.data);
             if (response.data.image) {
                 setImagePreview(response.data.image);
@@ -86,7 +86,6 @@ const ServiceForm = () => {
     };
 
     const handleFile = async (file) => {
-        // Validate file size (5MB = 5 * 1024 * 1024 bytes)
         if (file.size > 5 * 1024 * 1024) {
             setError('Ukuran file melebihi batas 5MB.');
             return;
@@ -103,7 +102,6 @@ const ServiceForm = () => {
                 }
             });
 
-            // Use the returned URL for both preview and form data
             const imageUrl = response.data.url;
             setImagePreview(imageUrl);
             setFormData(prev => ({ ...prev, image: imageUrl }));
@@ -124,7 +122,6 @@ const ServiceForm = () => {
             if (isEditMode) {
                 await axios.put(`${API_BASE_URL}/services/${id}`, formData);
             } else {
-                // Generate a random ID for new items (in a real backend this is automatic)
                 const newService = { ...formData, id: `SR-2023-${Math.floor(Math.random() * 1000)}` };
                 await axios.post(`${API_BASE_URL}/services`, newService);
             }
@@ -248,7 +245,7 @@ const ServiceForm = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-[#92a4c9]" htmlFor="price_daily">Harga per Hari (IDR)</label>
+                                    <label className="block text-sm font-medium text-[#92a4c9]" htmlFor="price_daily">Harga (IDR)</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <span className="text-[#92a4c9]">Rp</span>
@@ -261,6 +258,25 @@ const ServiceForm = () => {
                                             placeholder="0.00"
                                             type="number"
                                         />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-medium text-[#92a4c9]" htmlFor="service_type">Tipe Layanan</label>
+                                    <div className="relative">
+                                        <select
+                                            className="w-full bg-[#1a2332] border border-[#324467] text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 appearance-none"
+                                            id="service_type"
+                                            value={formData.service_type || 'per/hari'}
+                                            onChange={handleChange}
+                                        >
+                                            <option value="per/unit">per/unit</option>
+                                            <option value="per/hari">per/hari</option>
+                                            <option value="per/meter">per/meter</option>
+                                            <option value="per/paket">per/paket</option>
+                                        </select>
+                                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#92a4c9]">
+                                            <span className="material-symbols-outlined">expand_more</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="md:col-span-2 space-y-2">

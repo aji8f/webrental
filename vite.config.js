@@ -9,6 +9,7 @@ export default defineConfig({
       'waiting-capability-federation-pants.trycloudflare.com'
     ], // <--- WAJIB ada koma di sini!
     proxy: {
+      '/api': 'http://localhost:3001',
       '/categories': 'http://localhost:3001',
       '/services': 'http://localhost:3001',
       '/leads': 'http://localhost:3001',

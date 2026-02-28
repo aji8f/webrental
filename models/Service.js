@@ -6,6 +6,7 @@ const serviceSchema = new mongoose.Schema({
     description: { type: String },
     category: { type: String, required: true }, // slug or id reference, keeping as string to match db.json for now
     price_daily: { type: Number },
+    service_type: { type: String, default: 'per/hari' },
     unit: { type: String },
     inventory_count: { type: Number, default: 0 },
     status: { type: String, default: 'published' },

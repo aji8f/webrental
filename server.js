@@ -76,6 +76,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Authentication Middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Format: "Bearer TOKEN"
+
+    if (!token) return res.status(401).json({ error: 'Akses ditolak. Token tidak ditemukan.' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Token tidak valid atau sudah kadaluarsa.' });
+        req.user = user;
+        next();
+    });
+};
+
 // File Upload Route
 // Protected: only admins can upload files
 app.post('/upload', authenticateToken, upload.single('image'), (req, res) => {
@@ -95,19 +109,7 @@ const getSortOption = (req) => {
     return {};
 };
 
-// Authentication Middleware
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Format: "Bearer TOKEN"
 
-    if (!token) return res.status(401).json({ error: 'Akses ditolak. Token tidak ditemukan.' });
-
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ error: 'Token tidak valid atau sudah kadaluarsa.' });
-        req.user = user;
-        next();
-    });
-};
 
 // API Routes
 

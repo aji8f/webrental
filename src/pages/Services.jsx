@@ -87,7 +87,7 @@ const Services = () => {
 
                                     <div className="flex items-center justify-between border-t border-[#324467] pt-4 mt-2">
                                         <div>
-                                            <div className="text-[#92a4c9] text-xs">Harga / Hari</div>
+                                            <div className="text-[#92a4c9] text-xs">Harga / {(service.service_type || 'per/hari').replace('per/', '')}</div>
                                             <div className="text-white font-bold">Rp {service.price_daily?.toLocaleString('id-ID')}</div>
                                         </div>
                                         <div className="flex items-center gap-1">

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import useSettings from '../hooks/useSettings';
 import { getImageUrl } from '../utils/imageUtils';
-import axios from 'axios'; // Import axios
-import { toast } from 'react-hot-toast'; // Import toast
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const DashboardLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,7 +22,6 @@ const DashboardLayout = () => {
 
         if (newName && newName.trim() !== '' && newName !== currentName) {
             try {
-                // Create a deep copy of settings to update
                 const updatedSettings = {
                     ...settings,
                     profile: {
@@ -31,10 +30,9 @@ const DashboardLayout = () => {
                     }
                 };
 
-                // Use the updateSettings function from the hook
                 const success = await updateSettings(updatedSettings);
                 if (!success) {
-                    // Fallback if hook update fails (though hook handles toast)
+                    // Fallback if hook update fails
                 }
             } catch (error) {
                 console.error('Error updating name:', error);
@@ -42,6 +40,9 @@ const DashboardLayout = () => {
             }
         }
     };
+
+    const navLinkClass = ({ isActive }) =>
+        `flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`;
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-hidden flex h-screen w-full font-display">
@@ -78,60 +79,62 @@ const DashboardLayout = () => {
                         </div>
                     </div>
                 </div>
-                <nav className="flex-1 overflow-y-auto px-4 space-y-1">
-                    <NavLink
-                        to="/dashboard"
-                        end
-                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">dashboard</span>
-                        <span className="text-sm font-medium">Dashboard</span>
-                    </NavLink>
-                    <NavLink
-                        to="/dashboard/services"
-                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">inventory_2</span>
-                        <span className="text-sm font-medium">Layanan</span>
-                    </NavLink>
-                    <NavLink
-                        to="/dashboard/categories"
-                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">category</span>
-                        <span className="text-sm font-medium">Kategori</span>
-                    </NavLink>
-                    <NavLink
-                        to="/dashboard/portfolio"
-                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">work</span>
-                        <span className="text-sm font-medium">Portofolio</span>
-                    </NavLink>
-                    <NavLink
-                        to="/dashboard/about"
-                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">info</span>
-                        <span className="text-sm font-medium">Tentang</span>
-                    </NavLink>
-                    <NavLink
-                        to="/dashboard/leads"
-                        className={({ isActive }) => `flex items - center justify - between px - 3 py - 2.5 rounded - lg group transition - colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
-                    >
-                        <div className="flex items-center gap-3">
-                            <span className="material-symbols-outlined text-[20px]">inbox</span>
-                            <span className="text-sm font-medium">Prospek</span>
+                <nav className="flex-1 overflow-y-auto px-4 pb-4">
+                    {/* Main Menu */}
+                    <div className="mb-6">
+                        <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">Menu</p>
+                        <div className="space-y-1">
+                            <NavLink to="/dashboard" end className={navLinkClass}>
+                                <span className="material-symbols-outlined text-[20px]">dashboard</span>
+                                <span className="text-sm font-medium">Dashboard</span>
+                            </NavLink>
+                            <NavLink to="/dashboard/services" className={navLinkClass}>
+                                <span className="material-symbols-outlined text-[20px]">inventory_2</span>
+                                <span className="text-sm font-medium">Layanan</span>
+                            </NavLink>
+                            <NavLink to="/dashboard/categories" className={navLinkClass}>
+                                <span className="material-symbols-outlined text-[20px]">category</span>
+                                <span className="text-sm font-medium">Kategori</span>
+                            </NavLink>
+                            <NavLink to="/dashboard/portfolio" className={navLinkClass}>
+                                <span className="material-symbols-outlined text-[20px]">work</span>
+                                <span className="text-sm font-medium">Portofolio</span>
+                            </NavLink>
                         </div>
-                        {/* <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary/20 text-primary px-1.5 text-xs font-bold">12</span> */}
-                    </NavLink>
-                    <NavLink
-                        to="/dashboard/settings"
-                        className={({ isActive }) => `flex items - center gap - 3 px - 3 py - 2.5 rounded - lg group transition - colors mt - 6 ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'} `}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">settings</span>
-                        <span className="text-sm font-medium">Pengaturan</span>
-                    </NavLink>
+                    </div>
+
+                    {/* Content */}
+                    <div className="mb-6">
+                        <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">Konten</p>
+                        <div className="space-y-1">
+                            <NavLink to="/dashboard/about" className={navLinkClass}>
+                                <span className="material-symbols-outlined text-[20px]">info</span>
+                                <span className="text-sm font-medium">Tentang</span>
+                            </NavLink>
+                            <NavLink
+                                to="/dashboard/leads"
+                                className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2.5 rounded-lg group transition-colors ${isActive ? 'bg-primary text-white' : 'text-[#92a4c9] hover:bg-surface-dark-hover hover:text-white'}`
+                                }
+                            >
+                                <div className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-[20px]">inbox</span>
+                                    <span className="text-sm font-medium">Prospek</span>
+                                </div>
+                            </NavLink>
+                        </div>
+                    </div>
+
+                    {/* Settings */}
+                    <div>
+                        <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">Pengaturan</p>
+                        <div className="space-y-1">
+                            <NavLink to="/dashboard/settings" className={navLinkClass}>
+                                <span className="material-symbols-outlined text-[20px]">settings</span>
+                                <span className="text-sm font-medium">Pengaturan</span>
+                            </NavLink>
+                        </div>
+                    </div>
                 </nav>
                 <div className="p-4 border-t border-[#1e293b]">
                     <button onClick={handleLogout} className="flex w-full items-center justify-center gap-2 rounded-lg h-10 px-4 bg-surface-dark hover:bg-red-900/20 text-red-400 hover:text-red-300 border border-[#324467] hover:border-red-900/50 transition-all text-sm font-medium">
