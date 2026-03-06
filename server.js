@@ -103,6 +103,28 @@ const getSortOption = (req) => {
 // API Routes — all prefixed with /api to avoid SPA conflicts
 // ============================================================
 
+// --- Authentication ---
+app.post('/api/login', authLimiter, (req, res) => {
+    const { email, password } = req.body;
+
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@webrental.com';
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        const token = jwt.sign(
+            { email, role: 'admin' },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        res.json({
+            token,
+            user: { email, role: 'admin' }
+        });
+    } else {
+        res.status(401).json({ error: 'Email atau password salah' });
+    }
+});
+
 // File Upload
 app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) => {
     if (!req.file) {
