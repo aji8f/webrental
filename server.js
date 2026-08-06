@@ -90,12 +90,13 @@ const publicWriteLimiter = rateLimit({
 // CORS: browsers attach an Origin header even to same-origin requests for
 // resources loaded with a `crossorigin` attribute (Vite adds this to built
 // <script>/<link> tags), so "has an Origin header" does NOT mean cross-origin.
-// Compare against the request's own origin first; only requests from a
-// genuinely different, non-whitelisted origin get rejected.
+// Deliberately NOT derived from the request's own Host header — that's
+// forwarded as-is by Nginx's default_server fallback and isn't trustworthy
+// for an access-control decision. ALLOWED_ORIGINS must list the real
+// production origin(s) explicitly (see .env.example).
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    const selfOrigin = `${req.protocol}://${req.get('host')}`;
-    const isAllowed = !origin || origin === selfOrigin || ALLOWED_ORIGINS.includes(origin);
+    const isAllowed = !origin || ALLOWED_ORIGINS.includes(origin);
 
     if (origin && isAllowed) {
         res.setHeader('Access-Control-Allow-Origin', origin);
