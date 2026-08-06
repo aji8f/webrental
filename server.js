@@ -1,6 +1,5 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -36,6 +35,9 @@ if (missingEnvVars.length > 0) {
 }
 
 const app = express();
+// Behind Nginx/Cloudflare — trust X-Forwarded-Proto so req.protocol reflects the
+// real (https) scheme, not the plain-HTTP connection Nginx makes to this process.
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/webrentaldb';
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -48,7 +50,7 @@ app.use(helmet({
         directives: {
             defaultSrc: ["'self'"],
             imgSrc: ["'self'", 'data:', 'https:'],
-            scriptSrc: ["'self'"],
+            scriptSrc: ["'self'", 'https://static.cloudflareinsights.com'],
             styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
             fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
             connectSrc: ["'self'"],
@@ -85,17 +87,34 @@ const publicWriteLimiter = rateLimit({
 });
 
 // Middleware
-// CORS: same-origin browser requests never hit this check, so an empty
-// ALLOWED_ORIGINS default-denies cross-origin access rather than defaulting open.
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-            return callback(null, true);
-        }
-        callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true
-}));
+// CORS: browsers attach an Origin header even to same-origin requests for
+// resources loaded with a `crossorigin` attribute (Vite adds this to built
+// <script>/<link> tags), so "has an Origin header" does NOT mean cross-origin.
+// Compare against the request's own origin first; only requests from a
+// genuinely different, non-whitelisted origin get rejected.
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    const selfOrigin = `${req.protocol}://${req.get('host')}`;
+    const isAllowed = !origin || origin === selfOrigin || ALLOWED_ORIGINS.includes(origin);
+
+    if (origin && isAllowed) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        return res.sendStatus(204);
+    }
+
+    if (origin && !isAllowed) {
+        return res.status(403).json({ error: 'Not allowed by CORS' });
+    }
+
+    next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
