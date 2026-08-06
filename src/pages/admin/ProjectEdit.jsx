@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import GalleryModal from '../../components/admin/GalleryModal';
 import { getImageUrl } from '../../utils/imageUtils';
 import API_BASE_URL from '../../config/api';
 
@@ -13,7 +12,6 @@ const ProjectEdit = () => {
     const galleryInputRef = useRef(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [showGalleryModal, setShowGalleryModal] = useState(false);
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
@@ -379,10 +377,6 @@ const ProjectEdit = () => {
                                     <span className="material-symbols-outlined text-[18px]">select_all</span>
                                     Pilih Semua
                                 </button>
-                                <button onClick={() => setShowGalleryModal(true)} className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-900/20">
-                                    <span className="material-symbols-outlined text-[18px]">upload</span>
-                                    Unggah Baru
-                                </button>
                             </div>
                         </div>
                         <div className="p-6">
@@ -453,11 +447,6 @@ const ProjectEdit = () => {
                     </div>
                 </div>
             </main>
-            <GalleryModal
-                isOpen={showGalleryModal}
-                onClose={() => setShowGalleryModal(false)}
-                project={formData}
-            />
         </React.Fragment >
     );
 };

@@ -4,6 +4,7 @@ import useSettings from '../hooks/useSettings';
 import { getImageUrl } from '../utils/imageUtils';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import API_BASE_URL from '../config/api';
 
 const DashboardLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -11,8 +12,13 @@ const DashboardLayout = () => {
     const navigate = useNavigate();
     const { settings, loading, updateSettings } = useSettings();
 
-    const handleLogout = () => {
-        localStorage.removeItem('adminToken');
+    const handleLogout = async () => {
+        try {
+            await axios.post(`${API_BASE_URL}/logout`);
+        } catch {
+            // Even if the request fails, still clear local state and redirect
+        }
+        localStorage.removeItem('isAdminLoggedIn');
         navigate('/admin');
     };
 

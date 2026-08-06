@@ -21,21 +21,11 @@ const AdminLogin = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`${API_BASE_URL}/login`, {
-                email,
-                password
-            });
+            await axios.post(`${API_BASE_URL}/login`, { email, password });
 
-            const { token, user } = response.data;
-
-            // Store token
-            if (rememberMe) {
-                localStorage.setItem('adminToken', token);
-            } else {
-                // For simplicity, we'll store it in localStorage but a real app might
-                // use sessionStorage for non-remembered logins or secure HttpOnly cookies
-                localStorage.setItem('adminToken', token);
-            }
+            // The server sets an httpOnly cookie holding the real token; this flag
+            // is just a UI hint so ProtectedRoute doesn't flash the login form.
+            localStorage.setItem('isAdminLoggedIn', 'true');
 
             toast.success('Login successful');
             // Navigate to where they were trying to go, or dashboard by default

@@ -25,3 +25,9 @@ dist-ssr
 
 # Environment variables
 .env
+
+# User-uploaded content (generated at runtime, not source; server.js recreates this dir on boot)
+public/uploads/*
+
+# Cloudflare Tunnel binary (download at deploy time, don't commit binaries)
+cloudflared.exe

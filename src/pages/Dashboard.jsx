@@ -21,9 +21,8 @@ const Dashboard = () => {
                     axios.get(`${API_BASE_URL}/leads?_sort=createdAt&_order=desc`),
                     axios.get(`${API_BASE_URL}/services`),
                     axios.get(`${API_BASE_URL}/projects`),
-                    axios.get(`${API_BASE_URL}/contact-clicks/stats`, {
-                        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
-                    }).catch(() => ({ data: { total: 0, today: 0, byType: {} } }))
+                    axios.get(`${API_BASE_URL}/contact-clicks/stats`)
+                        .catch(() => ({ data: { total: 0, today: 0, byType: {} } }))
                 ]);
 
                 const leads = leadsRes.data;
